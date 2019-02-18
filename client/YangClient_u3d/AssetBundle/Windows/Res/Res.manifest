@@ -1,0 +1,14 @@
+ManifestFileVersion: 0
+CRC: 3310756000
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: 0 basic/1 cube (2).prefab
+      Dependencies:
+        Dependency_0: 0 basic/2 cube (3).prefab
+    Info_1:
+      Name: 0 basic/2 cube (3).prefab
+      Dependencies: {}
+    Info_2:
+      Name: 40 ui/0 test/0 tpdata.png
+      Dependencies: {}
