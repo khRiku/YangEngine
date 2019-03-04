@@ -1,0 +1,108 @@
+数据形式：
+    脚本像是中分析出的数据
+    	GameObject,  Component
+
+    UIbianj操作的内存数据
+    	GameObject,  Component
+
+
+数据模块设计
+	Dictionary<string, string>: 变量名  路径
+		读取到的脚本数据就直接放
+		后期操作的也放进去
+
+		工具显示全部变量时可用
+		左边的判断组件是否存在可以从这个将名字组合好判断
+
+    基于1问题的答案：
+        新建一个数据类型：
+        	UIElementData
+        		变量名
+        		UI相对路径
+        	    对应的GameObject
+
+
+问题1：判断已经添加的元素是否丢失了， 是每次 Find 还是缓存
+       缓存， 监听 EditorWindow.OnHierarchyChange 来刷新数据
+
+
+问题2： 是否增加待删除， 待增加步骤
+        增加待删除， 不增加待增加
+
+
+顶部UI排版：
+    如果要创建， 路径上又已有该文件，就显示红色
+	toggle 选择是否创建
+	toogle 是否可覆盖
+	TextFiled 路径， 
+    创建脚本按钮
+
+顶部显示 数据模块设计：
+
+
+已绑定了UI, 后面要修改ui prefab 需考虑的问题：
+	1：打开UI编辑器的情况下， 开始修改UI
+		增加新的UI：不需要处理， 后面用户自己添加绑定
+
+		删 GameObject ：
+		删组件 ：
+			删除的东西 可能跟 绑定的信息相关， 这时候只能元素标红提醒用户， 由用户手动删除
+
+		改名字：
+		改路径：
+			这种修改， 影响到组件获取， 但在打开编辑器的情况下可以，有对应GameObject 的引用缓存，所以可以修复这个问题。 元素标黄处理， 再给用户个按钮操作
+
+
+	2：在修改了UI 之后， 再打开 编辑器
+			增，删， 跟 1 的处理一样
+
+			改名字：
+			改路径：
+				由于没打开编辑器， 没有对应GameObject 的缓存， 故无法提供辅助， 只能标红处理
+
+根据以上问题， 要做的编码实现：
+	1：打开编辑器的情况下修改 UI
+		  1：监听 EditorWindow.OnInspectorUpdate, EditorWindow.OnHierarchyChange 来监听修改操作
+		  2：修改的对象是否跟 UI Prefab 是否有关系， 
+		     有关系下的情况下， 会继续处理， 否则返回：
+			    删对象， 删组件的情况下， 都会造成组件引用不存在了， 直接标红
+			    改名字， 改路径的情况下， GameObject 还存在， 通过他来刷新路径 和 名字
+		  3：调用 UIScriptCreateorManager.RefreshUIElementState 函数
+			     新建 UIScriptCreateorManager.RefreshUIElementState 函数， 用来刷新绑定的数据的状态
+			  	 新建 UIElementData.eState 枚举
+			  	     eState
+			  	     {
+			  	     	NotError,           //没有错误
+			  	     	PathError,          //路径有问题, 但组件是存在的， 改名， 改父节点会出现这个问题
+			  	    	ComponentNull,      //组件不存在， 删GameObject, 删组件， 会出现这个问题
+			  	     }
+		  4：显示 元素时， 根据状态显示颜色， 
+		  5：如果有 PathError 状态的元素， 顶部显示按钮来自动更新路径和变量名
+
+    2：在修改了UI 之后， 再打开 编辑器
+       打开时会创建 UIElementData 元素， 这时候就能更新状态， 如果有问题就是 ComponentNull 状态， 只能删除
+
+
+EditorWindow.OnHierarchyChange  触发时机介绍：
+	1：Go 改名时， Selection.activeGameObject 有值
+	2：改节点位置时，  Selection.activeGameObject 有值
+    3：删除Go时， Selection.activeGameObject 为 null
+    
+    4: 进入Prefab 编辑模式时， Selection.activeGameObject 会默认选中 Prefab的跟节点， 
+       其他的触发情况跟 1，2, 3 一样
+    5：退出 prefab 编辑器模式时， Selection.activeGameObject 会选中进入模式之前选中的Go, 
+       但如果那个Go 在Prefab 模式中被 1,2,3操作了， 此时Selection.activeGameObject 为空
+
+
+    
+    名字修改    OnHierarchyChange 触发， 且是选中 节点 是子节点之一的情况
+    删组件， OnInspectorUpdate 中查看 组件数量变化
+
+    改父节点    2018 需进入 prefab Hierarchy 模式， 节点选择有问题
+    删除节点    2018 需进入 prefab Hierarchy 模式， 节点选择有问题： 删除后 Selection  中没有这个物体了， 
+
+大红：  CN EntryErrorIcon
+小红：  CN EntryErrorIconSmall
+
+大黄： CN EntryWarnIcon
+小黄:  CN EntryWarnIconSmall
