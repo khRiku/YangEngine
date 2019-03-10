@@ -22,26 +22,27 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
     public Rect windowRect = new Rect(0, 0, 200, 200);
 
-    private Rect mBottomStartRec;                    //底部起始位置
-    private Rect mLeftComponentSlectInfoRect;        //底部左边， 
-    private Rect mRightComponentSlectInfoRect;       //底部右边， cell 的绘制起始处
-     
-    private int mLeftSlectIndex = -1;                //左边选择的 Index
-    private UIElementData mBrSelectUiElementData;    //底右选中的元素
+    private Rect mBottomStartRec; //底部起始位置
+    private Rect mLeftComponentSlectInfoRect; //底部左边， 
+    private Rect mRightComponentSlectInfoRect; //底部右边， cell 的绘制起始处
 
-    private Vector2 mScrollPos = Vector2.zero;       //整个显示范围的滑动位置
-    private Vector2 mBRScrollPos = Vector2.zero;     //底部右边显示已添加的元素的滑动位置
+    private int mLeftSlectIndex = -1; //左边选择的 Index
+    private UIElementData mBrSelectUiElementData; //底右选中的元素
+
+    private Vector2 mScrollPos = Vector2.zero; //整个显示范围的滑动位置
+    private Vector2 mBRScrollPos = Vector2.zero; //底部右边显示已添加的元素的滑动位置
 
     private bool mShowCreateToggle = true;
 
-    private SearchField mSearchField;              //搜索框
+    private SearchField mSearchField; //搜索框
 
 
     #region 搜索框 相关字段
-    private Rect mBRSerarchRect;                //搜索框显示范围
-    private string mSearchFieldStr;             //搜索的字符
 
-    private string mElementListFilterStr;       //筛选时用的字符
+    private Rect mBRSerarchRect; //搜索框显示范围
+    private string mSearchFieldStr; //搜索的字符
+
+    private string mElementListFilterStr; //筛选时用的字符
     private List<UIElementData> mFilterElementList = new List<UIElementData>();
 
     #endregion
@@ -50,10 +51,10 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
     private Color mAddColor = Color.green;
 
-    private Color mSelectColor = new Color(173f/255f, 216f/255f, 230f/255f);
+    private Color mSelectColor = new Color(173f / 255f, 216f / 255f, 230f / 255f);
 
     private Color mWarnColor = new Color(255f / 255f, 255f / 255f, 32f / 255f);
-    private Color mErrorColor = new Color(255/255f, 59/255f, 59/255f);
+    private Color mErrorColor = new Color(255 / 255f, 59 / 255f, 59 / 255f);
 
     #endregion
 
@@ -79,11 +80,12 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
     protected override void DrawGUI()
     {
-        mScrollPos = GUILayout.BeginScrollView(mScrollPos, false, true, GUILayout.Width(Screen.width - 10),GUILayout.Height(Screen.height - 30));
+        mScrollPos = GUILayout.BeginScrollView(mScrollPos, false, true, GUILayout.Width(Screen.width - 10),
+            GUILayout.Height(Screen.height - 30));
         {
             DrawTopInfo();
 
-           GUILayout.Label("", "dockareaStandalone", GUILayout.Height(2f));
+            GUILayout.Label("", "dockareaStandalone", GUILayout.Height(2f));
 
             DrawBottomInfo();
         }
@@ -145,6 +147,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
     #endregion
 
     #region 绘制顶部的信息
+
     private void DrawTopInfo()
     {
         string tTriangleStr = mShowCreateToggle ? "▼" : "▶";
@@ -165,12 +168,13 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
             GUILayout.BeginHorizontal("OL box NoExpand");
             {
-                tConfig.mCreate = EditorGUILayout.ToggleLeft(tConfig.mScriptName + " 脚本", tConfig.mCreate, GUILayout.Width(120f));
+                tConfig.mCreate = EditorGUILayout.ToggleLeft(tConfig.mScriptName + " 脚本", tConfig.mCreate,
+                    GUILayout.Width(120f));
                 tConfig.mCover = EditorGUILayout.ToggleLeft("可覆盖", tConfig.mCover, GUILayout.Width(70f));
 
                 GUILayout.Label("路径:", GUILayout.Width(32));
                 Color tOriginColor = GUI.color;
-                Color tColor = tConfig.IsNotAllowCover()? Color.red : tOriginColor;
+                Color tColor = tConfig.IsNotAllowCover() ? Color.red : tOriginColor;
                 GUI.color = tColor;
                 tConfig.mPath = EditorGUILayout.TextField(tConfig.mPath);
                 GUI.color = tOriginColor;
@@ -180,13 +184,14 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
                 if (GUILayout.Button("创建", GUILayout.Width(40f)))
                 {
-                    if (mManager.HasScripNotAllowToCoverInCreate())
+                    if (tConfig.IsNotAllowCover())
                     {
-                        ShowNotification(new GUIContent("创建失败：文件已存在且不允许覆盖，重新设置操作"));
+                        ShowNotification(new GUIContent("操作失败：文件已存在且不允许覆盖，重新设置操作"));
                     }
                     else
                     {
                         mManager.CreateScript(tConfig);
+                        ShowNotification(new GUIContent("文件创建完成"));
                     }
                 }
             }
@@ -195,11 +200,21 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
         if (GUILayout.Button("一 键 创 建", "LargeButtonMid"))
         {
-            mManager.CreateAllScript();
+            if (mManager.HasScripNotAllowToCoverInCreate())
+            {
+                ShowNotification(new GUIContent("操作失败：有文件已存在且不允许覆盖，重新设置操作"));
+            }
+            else
+            {
+                mManager.CreateAllScript();
+                ShowNotification(new GUIContent("文件创建完成"));
+            }
         }
+
         GUILayout.Space(5f);
 
     }
+
     #endregion
 
     #region 绘制底部的信息
@@ -239,7 +254,8 @@ public class UIScriptCreatorEW : BaseEditorWindow
         GUILayout.Label("▼元素选择", "dragtabdropwindow");
 
         GUI.changed = false;
-        GameObject tGo = (GameObject) EditorGUILayout.ObjectField("Prefab", mManager.mPrefabGo, typeof(GameObject), true);
+        GameObject tGo =
+            (GameObject) EditorGUILayout.ObjectField("Prefab", mManager.mPrefabGo, typeof(GameObject), true);
         if (GUI.changed == true)
         {
             bool tResult = mManager.SetUIPrefab(tGo);
@@ -257,6 +273,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
     }
 
     #region 底部左边的绘制
+
     private GameObject mBLGoSelect = null;
 
     private void DrawBottomLeft(Rect pRect)
@@ -272,7 +289,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
             mLeftComponentSlectInfoRect.height += 6;
         }
 
-       GameObject tSelectGo = Selection.activeGameObject;
+        GameObject tSelectGo = Selection.activeGameObject;
         //处理选中状态
         if (mBLGoSelect != tSelectGo)
         {
@@ -336,35 +353,19 @@ public class UIScriptCreatorEW : BaseEditorWindow
                     }
                 }
                 else
-                {              
+                {
                     if (GUILayout.Button("添加", GUILayout.Width(tOpBtnWidth)))
                     {
-                        Action tAddAction = () =>
+                        if (mManager.HasSameNameGoBind(tSelectGo))
                         {
-                            if (mManager.HasSameNameGoBind(tSelectGo))
-                            {
-                                //已有同名对象的被绑定了
-                                mSearchFieldStr = tSelectGo.name;
-                                ShowNotification(new GUIContent("添加失败， 已有同名的GameObject 绑定了, 请修改命名后再添加\n右边已筛选出名字相同的元素"));
-                            }
-                            else
-                            {
-                                mManager.AddNewUIElement(tSelectGo, tTypeName);
-                                UpdateFilterElementList();
-                            }
-                        };
-
-                        if (tSelectGo.name.Contains(" ") == true)
-                        {
-                            if (EditorUtility.DisplayDialog("错误", "选中的 GameObject 的名字有空格, 无法添加\n是否自动去掉空格后添加？", "好的", "不用，我自己处理"))
-                            {
-                                tSelectGo.name = tSelectGo.name.Replace(" ", "");
-                                tAddAction();
-                            }
+                            //已有同名对象的被绑定了
+                            mSearchFieldStr = tSelectGo.name;
+                            ShowNotification(new GUIContent("添加失败， 已有同名的GameObject 绑定了, 请修改命名后再添加\n右边已筛选出名字相同的元素"));
                         }
                         else
                         {
-                            tAddAction();
+                            mManager.AddNewUIElement(tSelectGo, tTypeName);
+                            UpdateFilterElementList();
                         }
                     }
                 }
@@ -385,6 +386,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
             }
         }
     }
+
     #endregion
 
     #region 底部右边的绘制
@@ -393,7 +395,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
     {
         //头部信息
         DrawBRTopInfo();
-        DrawBRElementInfo(pRect);      
+        DrawBRElementInfo(pRect);
     }
 
     private void DrawBRTopInfo()
@@ -433,7 +435,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
 
         }
 
-        if (GUILayout.Button(new GUIContent("匹配修复", "处理的问题：\n位置修改\n名称修改\n名称存在空格"), "LargeButton", GUILayout.Width(100f)))
+        if (GUILayout.Button(new GUIContent("匹配修复", "处理的问题：\n位置修改\n名称修改"), "LargeButton", GUILayout.Width(100f)))
         {
             mManager.RepairPathErrorUIElementData();
             UpdateFilterElementList();
@@ -496,7 +498,8 @@ public class UIScriptCreatorEW : BaseEditorWindow
         mBRScrollPos = GUILayout.BeginScrollView(mBRScrollPos, "GroupBox");
         {
             //调用GUILayoutUtility.GetRect 之后， 就相当于有这个 rect 的占用了
-            Rect tRect = GUILayoutUtility.GetRect(new GUIContent(""), "OL box NoExpand",GUILayout.Width(pRect.width - 45));
+            Rect tRect = GUILayoutUtility.GetRect(new GUIContent(""), "OL box NoExpand",
+                GUILayout.Width(pRect.width - 45));
             if (Event.current.type == EventType.Repaint)
             {
                 mRightComponentSlectInfoRect = tRect;
@@ -573,8 +576,8 @@ public class UIScriptCreatorEW : BaseEditorWindow
                     //选中按钮
                     if (GUILayout.Button("选中", GUILayout.Width(35f)))
                     {
-                       Selection.activeObject = tUIElementData.mGo;
-                       EditorGUIUtility.PingObject(tUIElementData.mGo);
+                        Selection.activeObject = tUIElementData.mGo;
+                        EditorGUIUtility.PingObject(tUIElementData.mGo);
                     }
 
 
@@ -606,6 +609,7 @@ public class UIScriptCreatorEW : BaseEditorWindow
     }
 
     #endregion
+
     #endregion
 
     #region 数据操作

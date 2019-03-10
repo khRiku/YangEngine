@@ -56,4 +56,19 @@ public class UIScriptCreateConfig
     {
         mPath = mGetDefaultPathFunc();
     }
+
+    /// <summary>
+    /// 能否创建
+    /// </summary>
+    /// <returns></returns>
+    public bool CanCreate()
+    {
+        if (mCreate == false)
+            return false;
+
+        if (File.Exists(mPath) && mCover == false)
+            return false;
+
+        return true;
+    }
 }

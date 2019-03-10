@@ -1,1 +1,1 @@
-{"0,1":"0 basic/1 Cube (2).prefab","0,2":"0 basic/2 Cube (3).prefab","0,3":"0 basic/3 Cube (3) 1.prefab","140,0":"140 animation1/0 New Sprite Atlas2.spriteatlas","20,1":"20 cfg/1 Cube (1).prefab","20,2":"20 cfg/2 Cube (2).prefab","40,0,0":"40 ui/0 test/0 tpData.png"}
+{"0,1":"0 basic/1 Cube (2).prefab","0,2":"0 basic/2 Cube (3).prefab","0,3":"0 basic/3 Cube (3) 1.prefab","140,0":"140 animation1/0 New Sprite Atlas2.spriteatlas","20,1":"20 cfg/1 Cube (1).prefab","20,2":"20 cfg/2 Cube (2).prefab","40,0,0":"40 ui/0 test/0 tpData.png","40,0,1":"40 ui/0 test/1 Canvas.prefab"}

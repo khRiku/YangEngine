@@ -156,10 +156,6 @@ public class UIElementData
         if (tGo == null)
             return;
 
-        //去掉名称的空格
-        if (mGo.name.Contains(" "))
-            mGo.name = mGo.name.Replace(" ", "");
-
         mGo = tGo;
         mTypeInstance = GetTypeInstance();
 

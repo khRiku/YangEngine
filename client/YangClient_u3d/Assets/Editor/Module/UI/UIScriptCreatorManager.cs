@@ -136,11 +136,14 @@ public class UIScriptCreatorManager
 
         string tScripPrePath = string.Format(@"{0}\{1}",Application.dataPath + @"/../HotFix\Scripts\module\UILogicModule", tStr);
 
-        mViewPath = string.Format(@"{0}\View\{1}View.cs", tScripPrePath, mPrefabGo.name);
-        mControllerPath = string.Format(@"{0}\Controller\{1}Controller.cs", tScripPrePath, mPrefabGo.name);
-        mModelPath = string.Format(@"{0}\Model\{1}Model.cs", tScripPrePath, mPrefabGo.name);
-        mProxyPath = string.Format(@"{0}\Proxy\Proxy{1}.cs", tScripPrePath, mPrefabGo.name);
-        mManagerPath = string.Format(@"{0}\Manager\{1}Manager.cs", tScripPrePath, mPrefabGo.name);
+        string tName = Regex.Replace(mPrefabGo.name, @"\d+ ", "");
+        tName = tName.Replace(" ", "");
+
+        mViewPath = string.Format(@"{0}\View\{1}View.cs", tScripPrePath, tName);
+        mControllerPath = string.Format(@"{0}\Controller\{1}Controller.cs", tScripPrePath, tName);
+        mModelPath = string.Format(@"{0}\Model\{1}Model.cs", tScripPrePath, tName);
+        mProxyPath = string.Format(@"{0}\Proxy\Proxy{1}.cs", tScripPrePath, tName);
+        mManagerPath = string.Format(@"{0}\Manager\{1}Manager.cs", tScripPrePath, tName);
 
         //脚本创建设置
         mScriptCreateConfigList.Clear();
@@ -302,7 +305,10 @@ public class UIScriptCreatorManager
     /// </summary>
     public static string GetVariableNameByStr(string pGoName, string pTypeName)
     {
-        string tName = string.Format("{0}_{1}", pGoName, pTypeName);
+        string tGoName = Regex.Replace(pGoName, @"\d+ ", "");
+        tGoName = tGoName.Replace(" ", "");
+
+        string tName = string.Format("{0}_{1}", tGoName, pTypeName);
 
         return tName;
     }
@@ -514,7 +520,8 @@ public class UIScriptCreatorManager
 
         foreach (var tScriptCreateConfig in mScriptCreateConfigList)
         {
-            CreateScript(tScriptCreateConfig);
+            if (tScriptCreateConfig.CanCreate())
+                CreateScript(tScriptCreateConfig);
         }
     }
 
@@ -526,7 +533,7 @@ public class UIScriptCreatorManager
         //类名
         string tContent = File.ReadAllText(GetTemplatePath(tConfig.mScriptType));
         string tReplaceName = tConfig.mScriptName + "Template";
-        string tClassName = mPrefabGo.name + tConfig.mScriptName;
+        string tClassName = GetClassNameByFilePath(tConfig.mPath);
 
         //特定的代码部分替换
         Func<string, string> tRepaceFunc = null;
@@ -534,13 +541,6 @@ public class UIScriptCreatorManager
         {
             case UIScriptCreateConfig.ScriptType.View:
                 tRepaceFunc = ReplaceViewTag;
-                break;
-
-            case UIScriptCreateConfig.ScriptType.Proxy:
-                //ProxyXXX 这种命名
-                tClassName = tConfig.mScriptName + mPrefabGo.name;   
-                break;
-            default:
                 break;
         }
 
@@ -616,6 +616,13 @@ public class UIScriptCreatorManager
         pContent = pContent.Replace("//CheckNullTag", tCheckNullTabSb.ToString());
 
         return pContent;
+
+    }
+
+    public string GetClassNameByFilePath(string pFilePath)
+    {
+        string tClassName = Regex.Match(pFilePath, @"\w+.cs").Value.Replace(".cs", "");
+        return tClassName;
 
     }
 
