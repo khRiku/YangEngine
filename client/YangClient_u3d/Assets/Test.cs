@@ -4,41 +4,43 @@ using UnityEngine;
 using System.IO;
 using JetBrains.Annotations;
 using  System.Collections.Generic;
+using UnityEngine.UI;
 
 class Test : MonoBehaviour
 {
     private Texture2D mTexture2D;
+    private UGUIGridWrapContent mGridWrapContent;
 
     private void Start()
     {
-        MyFocusControl(mTexture2D);
+        mGridWrapContent = this.GetComponent<UGUIGridWrapContent>();
+
+        UGUIGridWrapContentConfig tConfig = new UGUIGridWrapContentConfig()
+        {
+            mDataCnt = this.mDataCount,
+            mDisplayCellAction = DisplayCell,
+            mCreateFunc = () => { return GameObject.Instantiate(transform.GetChild(0).gameObject, this.transform); }
+        };
+
+        mGridWrapContent.Show(tConfig);
     }
 
-
-    public static bool MyFocusControl(Texture2D texture, params GUILayoutOption[] options)
+    private void DisplayCell(int pDataIndex, GameObject pGo)
     {
-        int id = GUIUtility.GetControlID(FocusType.Keyboard);
-        Color color = GUI.color;
+        Text tText = pGo.transform.GetComponent<Text>();
+        if (tText == null)
+            return;
 
-        GUI.color = GUIUtility.hotControl == id ? Color.green : Color.red;
-        Rect rect = GUILayoutUtility.GetRect(texture.width, texture.height, options);
+        tText.text = pDataIndex.ToString();
+    }
 
-        switch (Event.current.type)
-        {
-            case EventType.MouseDown:
-                if (rect.Contains(Event.current.mousePosition))
-                {
-                    GUIUtility.hotControl = id;
-                    Event.current.Use();
-                }
-                break;
-            case EventType.Repaint:
-                GUI.DrawTexture(rect, texture);
-                break;
-        }
+    public int mDataCount = 50;
+    [ContextMenu("改变数量")]
+    private void ChangeCount()
+    {
+        UGUIGridWrapContentConfig tConfig = mGridWrapContent.mConfig;
 
-        GUI.color = color;
-
-        return GUIUtility.hotControl == id;
+        tConfig.mDataCnt = mDataCount;
+        mGridWrapContent.Show(tConfig);
     }
 }
