@@ -1300,7 +1300,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1900519874}
   - component: {fileID: 1900519875}
-  - component: {fileID: 1900519877}
   - component: {fileID: 1900519876}
   m_Layer: 5
   m_Name: Content
@@ -1349,23 +1348,11 @@ MonoBehaviour:
   mVerticalCnt: 1
   mArrangeType: 0
   mScrollRect: {fileID: 181280457}
+  mScrollRectTransform: {fileID: 0}
   mRectTransform: {fileID: 1900519874}
   mViewPortRectTransform: {fileID: 697940466}
   mViewSize: {x: 281.1, y: 211}
 --- !u!114 &1900519876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1900519873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66c9d9373ba368743b2ce52c75d28479, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mDataCount: 50
---- !u!114 &1900519877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
