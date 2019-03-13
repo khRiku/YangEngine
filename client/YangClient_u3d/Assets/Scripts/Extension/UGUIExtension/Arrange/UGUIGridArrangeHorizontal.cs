@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ä»å·¦åˆ°å³æ’åºï¼Œ åˆ°äº†é™å®šçš„æ¯è¡Œæ•°ç›®å°±è¿‡è¡Œ
-/// ç”¨äº ScrollRect ä¸ºä¸Šä¸‹ æ»‘åŠ¨çš„æƒ…å†µ 
+/// ´Ó×óµ½ÓÒÅÅĞò£¬ µ½ÁËÏŞ¶¨µÄÃ¿ĞĞÊıÄ¿¾Í¹ıĞĞ
+/// ÓÃÓÚ ScrollRect ÎªÉÏÏÂ »¬¶¯µÄÇé¿ö 
 /// </summary>
 public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 {
@@ -17,7 +17,7 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
     {
         float tWidth = mGridWrapContent.mViewPortRectTransform.rect.width;
 
-        int tLineCount = Mathf.CeilToInt((float) mGridWrapContent.mConfig.mDataCnt / (float) mGridWrapContent.mHorizontalCnt);
+        int tLineCount = Mathf.CeilToInt((float)mGridWrapContent.mConfig.mDataCnt / (float)mGridWrapContent.mHorizontalCnt);
         float tHeight = tLineCount * mGridWrapContent.mCellHeight;
 
         mGridWrapContent.mRectTransform.sizeDelta = new Vector2(tWidth, tHeight);
@@ -39,7 +39,7 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
     public override Vector2 GetAnchorPosByDataIndex(int pDataIndex)
     {
         int tXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;
-        int tYIndex = Mathf.FloorToInt(pDataIndex / mGridWrapContent.mHorizontalCnt);
+        int tYIndex = GetYindexByDataIndex(pDataIndex);
 
         float tXPos = tXIndex * mGridWrapContent.mCellWidth + mGridWrapContent.mOffsetX;
         float tYPos = -tYIndex * mGridWrapContent.mCellHeight + mGridWrapContent.mOffsetY;
@@ -49,7 +49,7 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 
     public override int GetNewStartDataIndex()
     {
-        float tOffsetY = mGridWrapContent.mViewPortRectTransform.anchoredPosition.y;
+        float tOffsetY = mGridWrapContent.mRectTransform.anchoredPosition.y;
         if (tOffsetY < 0)
             tOffsetY = 0;
 
@@ -82,4 +82,47 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 
         return tNewDataIndexList;
     }
+
+    public override Vector2 GetFixAnchorPos(int pDataIndex, int pPosType)
+    {
+        int tYIndex = GetYindexByDataIndex(pDataIndex);
+        float tYPos = tYIndex * mGridWrapContent.mCellHeight;
+
+        switch (pPosType)
+        {
+            case (int)UGUIGridWrapContent.FixPosType.Center:
+                tYPos = (float)(tYPos - mGridWrapContent.mScrollRectTransform.rect.height * 0.5 + mGridWrapContent.mCellHeight * 0.5);
+                break;
+
+            case (int)UGUIGridWrapContent.FixPosType.Last:
+                tYPos = (float)(tYPos - mGridWrapContent.mScrollRectTransform.rect.height + mGridWrapContent.mCellHeight);
+                break;
+
+            default:
+                float tOffsetPos = (pPosType - 1) * mGridWrapContent.mCellHeight;
+                tYPos = tYPos - tOffsetPos;
+                break;
+        }
+
+        float tMaxYPos = mGridWrapContent.mRectTransform.rect.height
+                         - mGridWrapContent.mScrollRectTransform.rect.height;
+
+        float tMinPos = Mathf.Min(tMaxYPos, tYPos);
+    
+        return new Vector2(0, tMinPos);
+    }
+
+    #region ¸¨Öúº¯Êı
+
+    /// <summary>
+    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
+    /// </summary>
+    private int GetYindexByDataIndex(int pDataIndex)
+    {
+        int tYIndex = Mathf.FloorToInt(pDataIndex / mGridWrapContent.mHorizontalCnt);
+
+        return tYIndex;
+    }
+
+    #endregion
 }

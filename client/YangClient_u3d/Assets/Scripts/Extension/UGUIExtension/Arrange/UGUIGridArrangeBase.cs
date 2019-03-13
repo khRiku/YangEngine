@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class UGUIGridArrangeBase
 {
-    public static int mExtraLine = 2;  //åœ¨å¯è§†åŒºåŸŸç®—å‡ºçš„è¡Œæˆ–åˆ—çš„åŸºç¡€ä¸Šå†æ‰©å±•çš„è¡Œæˆ–åˆ—æ•°
+    public static int mExtraLine = 2;  //ÔÚ¿ÉÊÓÇøÓòËã³öµÄĞĞ»òÁĞµÄ»ù´¡ÉÏÔÙÀ©Õ¹µÄĞĞ»òÁĞÊı
 
     public UGUIGridWrapContent mGridWrapContent;
 
@@ -14,28 +14,33 @@ public abstract class UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// è°ƒæ•´å†…å®¹åŒºåŸŸé•¿å®½
+    /// µ÷ÕûÄÚÈİÇøÓò³¤¿í
     /// </summary>
     public abstract void AdjustContentSize();
 
     /// <summary>
-    /// æ ¹æ®å¯è§†åŒºåŸŸçš„å¤§å°ï¼Œ è®¡ç®—å‡ºå¤§å°
+    /// ¸ù¾İ¿ÉÊÓÇøÓòµÄ´óĞ¡£¬ ¼ÆËã³ö´óĞ¡
     /// </summary>
     public abstract int GetCellsCountByViewSize();
 
 
     /// <summary>
-    /// æ ¹æ®æ•°æ®çš„ç´¢å¼•ï¼Œ ç®—å‡ºä½ç½®
+    /// ¸ù¾İÊı¾İµÄË÷Òı£¬ Ëã³öÎ»ÖÃ
     /// </summary>
     public abstract Vector2 GetAnchorPosByDataIndex(int pDataIndex);
 
     /// <summary>
-    /// æ ¹æ® Content çš„ä½ç½®åç§»ï¼Œ è·å–æ–°çš„ èµ·å§‹æ•°æ®ç´¢å¼•
+    /// ¸ù¾İ Content µÄÎ»ÖÃÆ«ÒÆ£¬ »ñÈ¡ĞÂµÄ ÆğÊ¼Êı¾İË÷Òı
     /// </summary>
     public abstract int GetNewStartDataIndex();
 
     /// <summary>
-    /// æ ¹æ® Content çš„ä½ç½®åç§»ï¼Œ è·å–æ–°çš„æ•°æ®ç´¢å¼•åˆ—è¡¨
+    /// ¸ù¾İ Content µÄÎ»ÖÃÆ«ÒÆ£¬ »ñÈ¡ĞÂµÄÊı¾İË÷ÒıÁĞ±í
     /// </summary>
     public abstract List<int> GetNewDataIndexList();
+
+    /// <summary>
+    /// »ñÈ¡ Content µÄÎ»ÖÃ£¨¶¨Î»µ½Ö¸¶¨µÄdataIndex£©
+    /// </summary>
+    public abstract Vector2 GetFixAnchorPos(int pDataIndex, int pPosType);
 }

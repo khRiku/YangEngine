@@ -7,35 +7,39 @@ using System.Runtime.CompilerServices;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/// <summary>
+/// author: yangxuxiang(YXX)
+/// date: 2019/3/09
+/// </summary>
 
-/*é»˜è®¤uiæ’ç‰ˆè¦æ±‚
-   ScrollView  å¯¹é½ç‚¹æ— è¦æ±‚
-     Viewport  è¢«ScrollRect è®¾ç½®äº†ï¼Œ åŒ¹é… ScrollView çš„é•¿å®½ï¼Œ 
-               å¦‚æœæŒ‚æœ‰æ»šåŠ¨æ¡, ViewPort çš„é•¿å®½ä¼šå‡å»ï¼Œ æ»šåŠ¨æ¡å ç”¨çš„ç©ºé—´ï¼Œ ä¿è¯æ»šåŠ¨æ¡ä¸è¢«è£å‰ª
-       Content   é”šç‚¹ä¸è¢«é™åˆ¶åˆ°ï¼Œ ä½†è¯·è®¾ç½®ä¸ºå·¦ä¸Šè§’
+/*Ä¬ÈÏuiÅÅ°æÒªÇó
+   ScrollView  ¶ÔÆëµãÎŞÒªÇó
+     Viewport  ±»ScrollRect ÉèÖÃÁË£¬ Æ¥Åä ScrollView µÄ³¤¿í£¬ 
+               Èç¹û¹ÒÓĞ¹ö¶¯Ìõ, ViewPort µÄ³¤¿í»á¼õÈ¥£¬ ¹ö¶¯ÌõÕ¼ÓÃµÄ¿Õ¼ä£¬ ±£Ö¤¹ö¶¯Ìõ²»±»²Ã¼ô
+       Content   Ãªµã²»±»ÏŞÖÆµ½£¬ µ«ÇëÉèÖÃÎª×óÉÏ½Ç
 
-    Ps: UGUIGridWrapContent è„šæœ¬æŒ‚åœ¨Content ä¸Šï¼Œ ä¸Šé¢çš„Go, åå­—è‡ªå·±éšä¾¿æ”¹ï¼Œ ä¸Šé¢çš„åªæ˜¯ ugui åˆ›å»ºæ—¶çš„é»˜è®¤å‘½å
+    Ps: UGUIGridWrapContent ½Å±¾¹ÒÔÚContent ÉÏ£¬ ÉÏÃæµÄGo, Ãû×Ö×Ô¼ºËæ±ã¸Ä£¬ ÉÏÃæµÄÖ»ÊÇ ugui ´´½¨Ê±µÄÄ¬ÈÏÃüÃû
 */
 
 public class UGUIGridWrapContent : MonoBehaviour
 {
-    #region  æ’ç‰ˆç›¸å…³
+    #region  ÅÅ°æÏà¹Ø
 
-    public int mOffsetX = 0;           //å·¦ä¸Šè§’ x ä½ç½®åç§»
-    public int mOffsetY = 0;           //å·¦ä¸Šè§’ y ä½ç½®åç§»
+    public int mOffsetX = 0;           //×óÉÏ½Ç x Î»ÖÃÆ«ÒÆ
+    public int mOffsetY = 0;           //×óÉÏ½Ç y Î»ÖÃÆ«ÒÆ
 
-    public int mCellWidth = 100;       //å•ä¸ªå°UI å®½åº¦
-    public int mCellHeight = 100;      //å•ä¸ªå°UI é«˜åº¦
+    public int mCellWidth = 100;       //µ¥¸öĞ¡UI ¿í¶È
+    public int mCellHeight = 100;      //µ¥¸öĞ¡UI ¸ß¶È
 
-    public int mHorizontalCnt = 0;     //æ°´å¹³æ–¹å‘ï¼Œ æ¯è¡Œæœ‰å‡ ä¸ª
-    public int mVerticalCnt = 0;       //å‚ç›´æ–¹å‘ï¼Œ æ¯åˆ—æœ‰å‡ ä¸ª
+    public int mHorizontalCnt = 0;     //Ë®Æ½·½Ïò£¬ Ã¿ĞĞÓĞ¼¸¸ö
+    public int mVerticalCnt = 0;       //´¹Ö±·½Ïò£¬ Ã¿ÁĞÓĞ¼¸¸ö
 
 
-    //æ¯ä¸ªç”¨æˆ·åœ¨åˆ¶ä½œ cell çš„æ—¶å€™ï¼Œé”šç‚¹çš„æƒ…å†µå¤šç§å¤šæ ·ï¼Œåªè¦æ˜¯æ ‡å‡†çš„é”šç‚¹ç±»å‹, å¯è®¡ç®—å‡ºåç§»å€¼ï¼Œ å±è”½æ‰è¿™ä¸ªå·®å¼‚
-    private Vector2 mCellOffsetPos;
+    //Ã¿¸öÓÃ»§ÔÚÖÆ×÷ cell µÄÊ±ºò£¬ÃªµãµÄÇé¿ö¶àÖÖ¶àÑù£¬Ö»ÒªÊÇ±ê×¼µÄÃªµãÀàĞÍ, ¿É¼ÆËã³öÆ«ÒÆÖµ£¬ ÆÁ±ÎµôÕâ¸ö²îÒì
+    private Vector2 mCellOffsetPos = Vector2.zero;
 
     /// <summary>
-    /// æ’åˆ—ç±»å‹
+    /// ÅÅÁĞÀàĞÍ
     /// Horizontal:
     ///     1  2  3
     ///     4  5  6
@@ -45,16 +49,16 @@ public class UGUIGridWrapContent : MonoBehaviour
     ///     2  5
     ///     3  6
     ///
-    /// VerticalPageï¼š
+    /// VerticalPage£º
     ///     1  2  3  10  11  12
     ///     4  5  6  13  14
     ///     7  8  9
     /// </summary>
     public enum ArrangeType
     {
-        Horizontal,       // ä»å·¦åˆ°å³
-        Vertical,         // ä»ä¸Šåˆ°ä¸‹
-        VerticalPage,     // ä»å·¦åˆ°å³ï¼Œ é¡µçš„å½¢å¼
+        Horizontal,       // ´Ó×óµ½ÓÒ
+        Vertical,         // ´ÓÉÏµ½ÏÂ
+        VerticalPage,     // ´Ó×óµ½ÓÒ£¬ Ò³µÄĞÎÊ½
     }
     #endregion
 
@@ -62,22 +66,22 @@ public class UGUIGridWrapContent : MonoBehaviour
     public UGUIGridWrapContentConfig mConfig;
     public UGUIGridArrangeBase mGridArrangeBase;
 
-    #region æ•°æ®ç¼“å­˜ 
+    #region Êı¾İ»º´æ 
 
     public ScrollRect mScrollRect;
     public RectTransform mScrollRectTransform;
     public RectTransform mRectTransform;
     public RectTransform mViewPortRectTransform;
 
-    public Vector2 mViewSize;              //å¯è§†åŒºåŸŸçš„ é•¿å®½
+    public Vector2 mViewSize;              //¿ÉÊÓÇøÓòµÄ ³¤¿í
 
-    private List<GameObject> mCellList = new List<GameObject>();   //å®ä¾‹åŒ–çš„cell ç¼“å­˜
+    private List<GameObject> mCellList = new List<GameObject>();   //ÊµÀı»¯µÄcell »º´æ
 
 
-    private int mInstaceCellStartDataIndex = 0;    //å®ä¾‹åŒ–çš„cell çš„èµ·å§‹æ•°æ®ç´¢å¼•
+    private int mInstaceCellStartDataIndex = 0;    //ÊµÀı»¯µÄcell µÄÆğÊ¼Êı¾İË÷Òı
 
-    private List<int> mDataIndexList = new List<int>(); //å­˜å‚¨å®ä¾‹åŒ–çš„cell ä¸­å¯¹åº”çš„ æ•°æ®ç´¢å¼•
-    private Dictionary<int, GameObject> mCellDic = new Dictionary<int, GameObject>();  //key: æ•°æ®ç´¢å¼•ï¼Œ 
+    private List<int> mDataIndexList = new List<int>(); //´æ´¢ÊµÀı»¯µÄcell ÖĞ¶ÔÓ¦µÄ Êı¾İË÷Òı
+    private Dictionary<int, GameObject> mCellDic = new Dictionary<int, GameObject>();  //key: Êı¾İË÷Òı£¬ 
 
 
     private Vector3 mPosition = Vector3.zero;
@@ -96,7 +100,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         if (mPosition != this.transform.position)
         {
             //if (mPosChange == false)
-            //    Debug.LogError("Positin æ”¹å˜, ä½ç½® = ");
+            //    Debug.LogError("Positin ¸Ä±ä, Î»ÖÃ = ");
 
             mPosChange = true;
             mPosition = this.transform.position;
@@ -105,9 +109,12 @@ public class UGUIGridWrapContent : MonoBehaviour
         {
             mPosChange = false;
             OnPosEndChange();
-            // Debug.LogError("Positin åœæ­¢æ”¹å˜, ä½ç½® = ");
+            // Debug.LogError("Positin Í£Ö¹¸Ä±ä, Î»ÖÃ = ");
 
         }
+
+        if(mPosChange)
+            OnPosEndChange();
     }
 
     private void OnPosEndChange()
@@ -115,29 +122,32 @@ public class UGUIGridWrapContent : MonoBehaviour
         RefreshAllCellPos();
     }
 
-    //åˆ·æ–° Cell çš„ä½ç½®
+    //Ë¢ĞÂ Cell µÄÎ»ÖÃ
     private void RefreshAllCellPos()
     {
-        //èµ·å§‹ç‚¹ä¸å˜çš„æƒ…å†µï¼Œ ä½ç½®ä¹Ÿä¸éœ€è¦æ”¹å˜ï¼Œ ç›´æ¥è¿”å›
+        //ÆğÊ¼µã²»±äµÄÇé¿ö£¬ Î»ÖÃÒ²²»ĞèÒª¸Ä±ä£¬ Ö±½Ó·µ»Ø
         int tInstaceCellStartDataIndex = mGridArrangeBase.GetNewStartDataIndex();
-        if (tInstaceCellStartDataIndex == mInstaceCellStartDataIndex)
+        if(mInstaceCellStartDataIndex == tInstaceCellStartDataIndex)
             return;
+        
+        mInstaceCellStartDataIndex = tInstaceCellStartDataIndex;
 
-        //æ–°çš„æ•°æ®ç´¢å¼•è¡¨
+        //ĞÂµÄÊı¾İË÷Òı±í
         List<int> tNewDataIndexList = mGridArrangeBase.GetNewDataIndexList();
 
         int tNewI = 0;
         int tOldI = 0;
 
+        int i = 0; 
         while (true)
         {
-            //æ‰¾å‡ºæ–°çš„ æ•°æ®ç´¢å¼•
+            //ÕÒ³öĞÂµÄ Êı¾İË÷Òı
             int tNewDataIndex = -1;
             for (; tNewI < tNewDataIndexList.Count; ++tNewI)
             {
                 int tDataIndex = tNewDataIndexList[tNewI];
 
-                //æ–°çš„ç´¢å¼•åœ¨è€çš„ä¹Ÿæœ‰ï¼Œ ä¸ç”¨å¤„ç†
+                //ĞÂµÄË÷ÒıÔÚÀÏµÄÒ²ÓĞ£¬ ²»ÓÃ´¦Àí
                 if (mCellDic.ContainsKey(tDataIndex))
                     continue;
 
@@ -145,16 +155,16 @@ public class UGUIGridWrapContent : MonoBehaviour
                 break;
             }
 
-            //æ²¡æ–°çš„ç›´æ¥è¿”å›
+            //Ã»ĞÂµÄÖ±½Ó·µ»Ø
             if (tNewDataIndex == -1)
                 break;
 
-            //å°†æ— ç”¨çš„æ•°æ®ç´¢å¼•æ›¿æ¢ä¸ºæ–°çš„
+            //½«ÎŞÓÃµÄÊı¾İË÷ÒıÌæ»»ÎªĞÂµÄ
             for (; tOldI < mDataIndexList.Count; ++tOldI)
             {
                 int tOldDataIndex = mDataIndexList[tOldI];
 
-                //è€çš„ç´¢å¼•åœ¨æ–°çš„ä¹Ÿæœ‰ï¼Œ ä¸ç”¨å¤„ç†
+                //ÀÏµÄË÷ÒıÔÚĞÂµÄÒ²ÓĞ£¬ ²»ÓÃ´¦Àí
                 if (tNewDataIndexList.Contains(tOldDataIndex))
                     continue;
 
@@ -165,29 +175,33 @@ public class UGUIGridWrapContent : MonoBehaviour
                 mCellDic.Add(tNewDataIndex, tCell);
 
                 RectTransform tRectTransform = tCell.transform as RectTransform;
-                tRectTransform.anchoredPosition = mGridArrangeBase.GetAnchorPosByDataIndex(tNewDataIndex);
-
+                tRectTransform.anchoredPosition = GetAnchorPosByDataIndex(tNewDataIndex);
+         
                 mConfig.mDisplayCellAction(tNewDataIndex, tCell);
+
+                break;
             }
         }
     }
 
+
+
     private void CacheData()
     {
-        //ç¼“å­˜ç»„ä»¶
+        //»º´æ×é¼ş
         mRectTransform = this.transform as RectTransform;
 
         mViewPortRectTransform = this.transform.parent as RectTransform;
         mScrollRect = mViewPortRectTransform.parent.GetComponent<ScrollRect>();
-        mScrollRectTransform = mScrollRectTransform.transform as RectTransform;
+        mScrollRectTransform = mScrollRect.transform as RectTransform;
 
-        //ç¼“å­˜æ•°æ®
+        //»º´æÊı¾İ
         mViewSize = new Vector2(mViewPortRectTransform.rect.width, mViewPortRectTransform.rect.height);
     }
 
     private UGUIGridArrangeBase GetGridArrangeInstance()
     {
-        //TODO:YXX æœªå®Œæˆ
+        //TODO:YXX Î´Íê³É
         switch (mArrangeType)
         {
             case ArrangeType.Horizontal:
@@ -216,7 +230,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         CreateAllCellInstance();
     }
 
-    //è®¾ç½®ä¸€äº›é»˜è®¤å€¼
+    //ÉèÖÃÒ»Ğ©Ä¬ÈÏÖµ
     private void SetDefaultValue()
     {
         if (mCellHeight <= 0)
@@ -232,7 +246,7 @@ public class UGUIGridWrapContent : MonoBehaviour
             mVerticalCnt = 1;
     }
 
-    //åˆå§‹åŒ– Content çš„ä¸€äº›è®¾ç½®
+    //³õÊ¼»¯ Content µÄÒ»Ğ©ÉèÖÃ
     private void InitSeeting()
     {
         mRectTransform.pivot = new Vector2(0, 1);
@@ -240,7 +254,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         mCellOffsetPos = new Vector2(float.MaxValue, float.MaxValue);
     }
 
-    //ä¿®æ”¹éœ€å®ä¾‹åŒ–çš„cell æ•°é‡
+    //ĞŞ¸ÄĞèÊµÀı»¯µÄcell ÊıÁ¿
     private void CreateAllCellInstance()
     {
         int tViewCnt = mGridArrangeBase.GetCellsCountByViewSize();
@@ -250,12 +264,11 @@ public class UGUIGridWrapContent : MonoBehaviour
         mDataIndexList.Clear();
         mCellDic.Clear();
 
-        //åˆ›å»ºcell
+        //´´½¨cell
         int i = 0;
         for (; i < tInstanceCnt; ++i)
         {
-            GameObject tCell = mConfig.CreateCell();
-            tCell.SetActive(true);
+            GameObject tCell = null;
 
             if (i < mCellList.Count)
             {
@@ -265,6 +278,8 @@ public class UGUIGridWrapContent : MonoBehaviour
             else
             {
                 tCell = mConfig.CreateCell();
+                tCell.SetActive(true);
+
                 mCellList.Add(tCell);
             }
 
@@ -272,30 +287,37 @@ public class UGUIGridWrapContent : MonoBehaviour
             mCellDic.Add(i, tCell);
 
             RectTransform tRectTransform = tCell.transform as RectTransform;
-            Vector2 tGridPos = mGridArrangeBase.GetAnchorPosByDataIndex(i);
 
             if (mCellOffsetPos.x == float.MaxValue)
                 mCellOffsetPos = GetCellOffsetValue(tRectTransform);
 
-            tRectTransform.anchoredPosition =  tGridPos + mCellOffsetPos;
+            tRectTransform.anchoredPosition = GetAnchorPosByDataIndex(i);
 
             mConfig.mDisplayCellAction(i, tCell);
         }
 
-        //éšè—å¤šä½™çš„cell
+        //Òş²Ø¶àÓàµÄcell
         for (; i < mCellList.Count; ++i)
         {
             mCellList[i].SetActive(false);
         }
     }
 
-    //è·å–cell çš„ä½ç½®åç§»ï¼Œ ç›®çš„æ˜¯ä½¿å…¶å¯¹ä½æ˜¯content çš„å·¦ä¸Šè§’
+    public Vector2 GetAnchorPosByDataIndex(int pDataIndex)
+    {
+        Vector2 tGridPos = mGridArrangeBase.GetAnchorPosByDataIndex(pDataIndex);
+        Vector2 tAnchorPos = tGridPos + mCellOffsetPos;
+
+        return tAnchorPos;
+    }
+
+    //»ñÈ¡cell µÄÎ»ÖÃÆ«ÒÆ£¬ Ä¿µÄÊÇÊ¹Æä¶ÔÎ»ÊÇcontent µÄ×óÉÏ½Ç
     private Vector2 GetCellOffsetValue(RectTransform pCell)
     {
 #if UNITY_EDITOR
         if (pCell.IsStandAnchorType() == false)
         {
-            Debug.LogError("cell çš„é”šç‚¹å¿…é¡»æ˜¯æ ‡å‡†çš„å½¢å¼ï¼Œ å°±æ˜¯TopLeft, TopCenter ... ... è¿™ç§");
+            Debug.LogError("cell µÄÃªµã±ØĞëÊÇ±ê×¼µÄĞÎÊ½£¬ ¾ÍÊÇTopLeft, TopCenter ... ... ÕâÖÖ");
         }
 #endif
         RectTransformAnchorType tAnchorType = pCell.GetAnchorType();
@@ -322,13 +344,10 @@ public class UGUIGridWrapContent : MonoBehaviour
 
 #if UNITY_EDITOR
   
-    private bool mInspectorInit = false;
     public void InspectorInit()
     {
-        if (mInspectorInit)
+        if (mCellOffsetPos != Vector2.zero)
             return;
-
-        mInspectorInit = true;
 
         CacheData();
         SetDefaultValue();
@@ -337,20 +356,42 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     public void RepositionCellInEditor()
     {
-        UGUIGridArrangeBase tGridArrangeBase = GetGridArrangeInstance();
+        mGridArrangeBase = GetGridArrangeInstance();
 
         for (int i = 0; i < this.transform.childCount; ++i)
         {
             RectTransform tRectTransform = this.transform.GetChild(i) as RectTransform;
-
-            Vector2 tGridPos = tGridArrangeBase.GetAnchorPosByDataIndex(i);
             mCellOffsetPos = GetCellOffsetValue(tRectTransform);
 
-            tRectTransform.anchoredPosition = tGridPos + mCellOffsetPos;
-        }
+            Vector2 tAnchorPos = GetAnchorPosByDataIndex(i);
 
+            tRectTransform.anchoredPosition = tAnchorPos;
+        }
     }
 
 #endif
+    #endregion
+
+    #region Íâ²¿½Ó¿Ú ¸¨Öúº¯Êı
+
+    public enum FixPosType
+    {
+        Center = -100,     //¶¨Î»µ½¿ÉÊÓÇøÓòµÄÖĞ¼ä
+        Last = -200,       //¶¨Î»µ½¿ÉÊÓÇøÓòµÄ×îºó
+    }
+
+    /// <summary>
+    /// ¶¨Î»µ½Ö¸¶¨µÄÊı¾İË÷Òı
+    /// </summary>
+    /// <param name="pDataIndex"></param>
+    /// <param name="pPostType">¶¨Î»µ½¿ÉÊÓÇøÓòµÄµÚ¼¸ĞĞ, 1 Îª µÚ 1 ĞĞ(ÁĞ£©£¬ 2 Îª µÚ 2 ĞĞ£¨ÁĞ£©, ÌØÊâÎ»ÖÃ¿´ FixPosType </param>
+    public void FixToDataIndex(int pDataIndex, int pPosType = 1)
+    {
+        Vector2 tFixAnchorPos = mGridArrangeBase.GetFixAnchorPos(pDataIndex, pPosType);
+        mRectTransform.anchoredPosition = tFixAnchorPos;
+
+        RefreshAllCellPos();
+    }
+
     #endregion
 }

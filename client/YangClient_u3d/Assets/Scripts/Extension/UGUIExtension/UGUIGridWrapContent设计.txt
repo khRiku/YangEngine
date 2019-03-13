@@ -1,8 +1,8 @@
-æ¯ä¸ª DataIndex éƒ½å¯¹åº”ä¸€ä¸ª é€»è¾‘ä¸Šçš„ CellIndex
+Ã¿¸ö DataIndex ¶¼¶ÔÓ¦Ò»¸ö Âß¼­ÉÏµÄ CellIndex
 
-æ ¹æ® Content ä½ç§»ä¿¡æ¯ï¼Œ å¯ä»¥æŠŠå®žä¾‹åŒ–çš„ Cell å¯¹åº”ä¸Š CellIndex
+¸ù¾Ý Content Î»ÒÆÐÅÏ¢£¬ ¿ÉÒÔ°ÑÊµÀý»¯µÄ Cell ¶ÔÓ¦ÉÏ CellIndex
 
-æ ¹æ®åç§»ä¿¡æ¯é‡æ–°ç®—å‡º å®žä¾‹åŒ–çš„cell èµ·å§‹ç‚¹çš„index
+¸ù¾ÝÆ«ÒÆÐÅÏ¢ÖØÐÂËã³ö ÊµÀý»¯µÄcell ÆðÊ¼µãµÄindex
 
-æœ€å¤§å®žä¾‹åŒ–çš„ Cell ä¸ºæ¯è¡Œæˆ–åˆ— + 2 å°±è¶³å¤Ÿäº†
+×î´óÊµÀý»¯µÄ Cell ÎªÃ¿ÐÐ»òÁÐ + 2 ¾Í×ã¹»ÁË
 

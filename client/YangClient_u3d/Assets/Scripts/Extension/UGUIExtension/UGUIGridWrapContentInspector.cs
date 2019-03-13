@@ -13,22 +13,22 @@ public class UGUIGridWrapContentInspector : Editor
 
         GUILayout.Space(10f);
 
-        EditorGUILayout.HelpBox("è¯¥ç»„ä»¶å¯¹Cellçš„æ’åºæ˜¯ä» Cellçš„çˆ¶èŠ‚ç‚¹ çš„å·¦ä¸Šè§’å¼€å§‹çš„, è‹¥è¦è°ƒæ•´ä½ç½®è¯·ç§»åŠ¨æŒ‚è½½äº† ScrollRect çš„ GameObject", MessageType.Info);
+        EditorGUILayout.HelpBox("¸Ã×é¼ş¶ÔCellµÄÅÅĞòÊÇ´Ó CellµÄ¸¸½Úµã µÄ×óÉÏ½Ç¿ªÊ¼µÄ, ÈôÒªµ÷ÕûÎ»ÖÃÇëÒÆ¶¯¹ÒÔØÁË ScrollRect µÄ GameObject", MessageType.Info);
 
         tGridWrapContent.mCellWidth = EditorGUILayout.IntField("Cell Width", tGridWrapContent.mCellWidth);
         tGridWrapContent.mCellHeight = EditorGUILayout.IntField("Cell Height", tGridWrapContent.mCellHeight);
 
 
-        tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType)EditorGUILayout.EnumPopup("æ’åˆ—æ–¹å¼(ArrangeType)", tGridWrapContent.mArrangeType);
+        tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType)EditorGUILayout.EnumPopup("ÅÅÁĞ·½Ê½(ArrangeType)", tGridWrapContent.mArrangeType);
         if (tGridWrapContent.mArrangeType == UGUIGridWrapContent.ArrangeType.Horizontal)
         {
-            GUILayout.Label("å·²å°† ScrooRect è°ƒæ•´ä¸º ä¸Šä¸‹æ»‘åŠ¨");
+            GUILayout.Label("ÒÑ½« ScrooRect µ÷ÕûÎª ÉÏÏÂ»¬¶¯");
             tGridWrapContent.mScrollRect.vertical = true;
             tGridWrapContent.mScrollRect.horizontal = false;
         }
         else
         {
-            GUILayout.Label("å·²å°† ScrooRect è°ƒæ•´ä¸º å·¦å³æ»‘åŠ¨");
+            GUILayout.Label("ÒÑ½« ScrooRect µ÷ÕûÎª ×óÓÒ»¬¶¯");
             tGridWrapContent.mScrollRect.vertical = false;
             tGridWrapContent.mScrollRect.horizontal = true;
         }
@@ -36,16 +36,16 @@ public class UGUIGridWrapContentInspector : Editor
         switch (tGridWrapContent.mArrangeType)
         {
             case UGUIGridWrapContent.ArrangeType.Vertical:
-                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "æ°´å¹³æ–¹å‘ï¼Œæ¯è¡Œæœ‰å‡ ä¸ª"), tGridWrapContent.mVerticalCnt);
+                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "Ë®Æ½·½Ïò£¬Ã¿ĞĞÓĞ¼¸¸ö"), tGridWrapContent.mVerticalCnt);
                 break;
 
             case UGUIGridWrapContent.ArrangeType.Horizontal:
-                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "å‚ç›´æ–¹å‘ï¼Œæ¯åˆ—æœ‰å‡ ä¸ª"), tGridWrapContent.mHorizontalCnt);
+                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "´¹Ö±·½Ïò£¬Ã¿ÁĞÓĞ¼¸¸ö"), tGridWrapContent.mHorizontalCnt);
                 break;
 
             case UGUIGridWrapContent.ArrangeType.VerticalPage:
-                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "æ°´å¹³æ–¹å‘ï¼Œæ¯è¡Œæœ‰å‡ ä¸ª"), tGridWrapContent.mVerticalCnt);
-                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "å‚ç›´æ–¹å‘ï¼Œæ¯åˆ—æœ‰å‡ ä¸ª"), tGridWrapContent.mHorizontalCnt);
+                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "Ë®Æ½·½Ïò£¬Ã¿ĞĞÓĞ¼¸¸ö"), tGridWrapContent.mVerticalCnt);
+                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "´¹Ö±·½Ïò£¬Ã¿ÁĞÓĞ¼¸¸ö"), tGridWrapContent.mHorizontalCnt);
 
                 break;
         }
@@ -67,7 +67,7 @@ public class UGUIGridWrapContentInspector : Editor
             tGridWrapContent.RepositionCellInEditor();
         }
 
-        if (GUILayout.Button("é‡æ–°æ’åº"))
+        if (GUILayout.Button("ÖØĞÂÅÅĞò"))
             tGridWrapContent.RepositionCellInEditor();
     }
 }
