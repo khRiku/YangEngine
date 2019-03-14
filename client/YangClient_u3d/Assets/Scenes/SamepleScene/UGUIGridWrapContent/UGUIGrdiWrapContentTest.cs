@@ -6,9 +6,9 @@ using JetBrains.Annotations;
 using  System.Collections.Generic;
 using UnityEngine.UI;
 
-class Test : MonoBehaviour
+class UGUIGrdiWrapContentTest : MonoBehaviour
 {
-    private Texture2D mTexture2D;
+    public GameObject mCell;
     private UGUIGridWrapContent mGridWrapContent;
 
     private void Start()
@@ -19,7 +19,7 @@ class Test : MonoBehaviour
         {
             mDataCnt = this.mDataCount,
             mDisplayCellAction = DisplayCell,
-            mCreateFunc = () => { return GameObject.Instantiate(transform.GetChild(0).gameObject, this.transform); }
+            mCreateFunc = () => { return GameObject.Instantiate(mCell, this.transform); }
         };
 
         mGridWrapContent.Show(tConfig);
@@ -27,14 +27,14 @@ class Test : MonoBehaviour
 
     private void DisplayCell(int pDataIndex, GameObject pGo)
     {
-        Text tText = pGo.transform.GetComponent<Text>();
+        Text tText = pGo.transform.GetChild(0).transform.GetComponent<Text>();
         if (tText == null)
             return;
 
         tText.text = pDataIndex.ToString();
     }
 
-    public int mDataCount = 50;
+    public int mDataCount = 70;
     [ContextMenu("改变数量")]
     private void ChangeCount()
     {
@@ -42,5 +42,13 @@ class Test : MonoBehaviour
 
         tConfig.mDataCnt = mDataCount;
         mGridWrapContent.Show(tConfig);
+    }
+
+    public int mFixTo = 1;
+    public int mPosType;
+    [ContextMenu("定位")]
+    private void FixTo()
+    {
+        mGridWrapContent.FixToDataIndex(mFixTo, mPosType);
     }
 }

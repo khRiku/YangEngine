@@ -201,17 +201,16 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     private UGUIGridArrangeBase GetGridArrangeInstance()
     {
-        //TODO:YXX Î´Íê³É
         switch (mArrangeType)
         {
             case ArrangeType.Horizontal:
                 return new UGUIGridArrangeHorizontal(this);
 
-            case ArrangeType.Vertical:
-                return null;
-
             case ArrangeType.VerticalPage:
-                return null;
+                return new UGUIGridArrangeHorizontalPage(this);
+
+            case ArrangeType.Vertical:
+                return new UGUIGridArrangeVertical(this);
         }
 
         return null;
