@@ -13,12 +13,10 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
 
     public override void AdjustContentSize()
     {
-        float tHeight = mGridWrapContent.mViewPortRectTransform.rect.height;
-
         int tLineCount = Mathf.CeilToInt((float)mGridWrapContent.mConfig.mDataCnt / (float)mGridWrapContent.mVerticalCnt);
         float tWidth = tLineCount * mGridWrapContent.mCellWidth;
 
-        mGridWrapContent.mRectTransform.sizeDelta = new Vector2(tWidth, tHeight);
+        mGridWrapContent.mRectTransform.sizeDelta = new Vector2(tWidth, 0);
         mGridWrapContent.mRectTransform.anchoredPosition = Vector2.zero;
     }
 

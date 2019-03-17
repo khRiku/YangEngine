@@ -2,28 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//左右排列， 页的形式， 跟手机的一样， 适用于左右滚动的情况
 public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 {
+    public int mPageCellCount { get; private set; }      //每页有多少个cell
+
+    //有多少页
+    public int mPageCount
+    {
+        get
+        {
+            if (mGridWrapContent == null || mGridWrapContent.mConfig == null || mGridWrapContent.mConfig.mDataCnt <= 0)
+                return 0;
+
+            return Mathf.CeilToInt(mGridWrapContent.mConfig.mDataCnt / mPageCellCount);
+        }
+    }       
+
     public UGUIGridArrangeHorizontalPage(UGUIGridWrapContent pGridWrapContent) : base(pGridWrapContent)
     {
+        mPageCellCount = mGridWrapContent.mVerticalCnt * mGridWrapContent.mHorizontalCnt;
     }
 
     public override void AdjustContentSize()
     {
-        float tWidth = mGridWrapContent.mViewPortRectTransform.rect.width;
+        int tLineCount = mPageCount * mGridWrapContent.mHorizontalCnt;
+        float tWidth = tLineCount * mGridWrapContent.mCellWidth;
 
-        int tLineCount = Mathf.CeilToInt((float)mGridWrapContent.mConfig.mDataCnt / (float)mGridWrapContent.mHorizontalCnt);
-        float tHeight = tLineCount * mGridWrapContent.mCellHeight;
-
-        mGridWrapContent.mRectTransform.sizeDelta = new Vector2(tWidth, tHeight);
+        mGridWrapContent.mRectTransform.sizeDelta = new Vector2(tWidth, 0);
         mGridWrapContent.mRectTransform.anchoredPosition = Vector2.zero;
     }
 
     public override int GetCellsCountByViewSize()
     {
-        float tViewPortHeight = mGridWrapContent.mScrollRectTransform.rect.height;
+        float tViewPortWidth = mGridWrapContent.mScrollRectTransform.rect.width;
 
-        int tViewLine = Mathf.CeilToInt(tViewPortHeight / mGridWrapContent.mCellHeight);
+        int tViewLine = Mathf.CeilToInt(tViewPortWidth / mGridWrapContent.mCellWidth);
         int tTotalLine = tViewLine + UGUIGridArrangeBase.mExtraLine;
 
         int tCount = tTotalLine * mGridWrapContent.mHorizontalCnt;
@@ -33,6 +47,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
     public override Vector2 GetAnchorPosByDataIndex(int pDataIndex)
     {
+       //TODO:YXX  做到这个函数， 后面开始处理这个函数
         int tXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;
         int tYIndex = GetYindexByDataIndex(pDataIndex);
 
