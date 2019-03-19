@@ -12,17 +12,20 @@ using Object = UnityEngine.Object;
 
 public class UIScriptCreatorManager
 {
-    public Dictionary<string, UIElementData> mUIElementDic = new Dictionary<string, UIElementData>();   //key: 变量名， 存放绑定的元素
-    List<string> mWaitToDelectList = new List<string>();   //存放待删除的变量名
+    public Dictionary<string, UIElementData>
+        mUIElementDic = new Dictionary<string, UIElementData>(); //key: 变量名， 存放绑定的元素
+
+    List<string> mWaitToDelectList = new List<string>(); //存放待删除的变量名
 
     public List<UIScriptCreateConfig> mScriptCreateConfigList = new List<UIScriptCreateConfig>();
-   
+
     //UI Prefab
-    public GameObject mPrefabGo {  get; private set; }
+    public GameObject mPrefabGo { get; private set; }
     public static string mGoTypeName = "GameObject";
 
 
     #region 路径信息
+
     /*  路径位置示例   *****
      
     ui prefab 存放位置：     E:\github\YangEngine\client\YangClient_u3d\Assets\Res\40 ui
@@ -36,12 +39,14 @@ public class UIScriptCreatorManager
     //Prefab 相对于 Assets 的位置， 例如这样： Assets/GameObject.prefab
     public string mPrefabRelativePath;
 
-    
-    public string mViewPath = "";          //view 代码脚本的位置， 如：E:\github\YangEngine\client\YangClient_u3d\HotFix\Scripts\module\UILogicModule\xxx\View\ prefab名称+View.cs
-    public string mControllerPath = "";    //跟View 类似， 但相关字符是 Controller
-    public string mModelPath = "";         //跟View 类似， 但相关字符是 Model
-    public string mProxyPath = "";         //跟View 类似， 但相关字符是 Proxy
-    public string mManagerPath = "";       //跟View 类似， 但相关字符是 Manager
+
+    public string
+        mViewPath = ""; //view 代码脚本的位置， 如：E:\github\YangEngine\client\YangClient_u3d\HotFix\Scripts\module\UILogicModule\xxx\View\ prefab名称+View.cs
+
+    public string mControllerPath = ""; //跟View 类似， 但相关字符是 Controller
+    public string mModelPath = ""; //跟View 类似， 但相关字符是 Model
+    public string mProxyPath = ""; //跟View 类似， 但相关字符是 Proxy
+    public string mManagerPath = ""; //跟View 类似， 但相关字符是 Manager
 
     //模板代码的位置
     public string mViewTemplatyPath = "";
@@ -71,7 +76,7 @@ public class UIScriptCreatorManager
     {
         if (pGo == null)
             return false;
-        
+
         if (PrefabUtility.GetPrefabAssetType(pGo) == PrefabAssetType.NotAPrefab)
         {
             mPrefabGo = null;
@@ -134,7 +139,8 @@ public class UIScriptCreatorManager
         int tIndex = tStr.IndexOf('/');
         tStr = tIndex >= 0 ? tStr.Insert(tIndex, "Module") : string.Format("{0}Module", tStr);
 
-        string tScripPrePath = string.Format(@"{0}\{1}",Application.dataPath + @"/../HotFix\Scripts\module\UILogicModule", tStr);
+        string tScripPrePath = string.Format(@"{0}\{1}",
+            Application.dataPath + @"/../HotFix\Scripts\module\UILogicModule", tStr);
 
         string tName = Regex.Replace(mPrefabGo.name, @"\d+ ", "");
         tName = tName.Replace(" ", "");
@@ -147,11 +153,41 @@ public class UIScriptCreatorManager
 
         //脚本创建设置
         mScriptCreateConfigList.Clear();
-        mScriptCreateConfigList.Add(new UIScriptCreateConfig() { mScriptType = UIScriptCreateConfig.ScriptType.View, mCover = true, mCreate = true, DefaultGetPathFunc = () => { return mViewPath; } });
-        mScriptCreateConfigList.Add(new UIScriptCreateConfig() { mScriptType = UIScriptCreateConfig.ScriptType.Controller, mCover = false, mCreate = false, DefaultGetPathFunc = () => { return mControllerPath; } });
-        mScriptCreateConfigList.Add(new UIScriptCreateConfig() { mScriptType = UIScriptCreateConfig.ScriptType.Model, mCover = false, mCreate = false, DefaultGetPathFunc = () => { return mModelPath; } });
-        mScriptCreateConfigList.Add(new UIScriptCreateConfig() { mScriptType = UIScriptCreateConfig.ScriptType.Proxy, mCover = false, mCreate = false, DefaultGetPathFunc = () => { return mProxyPath; } });
-        mScriptCreateConfigList.Add(new UIScriptCreateConfig() { mScriptType = UIScriptCreateConfig.ScriptType.Manager, mCover = false, mCreate = false, DefaultGetPathFunc = () => { return mManagerPath; } });
+        mScriptCreateConfigList.Add(new UIScriptCreateConfig()
+        {
+            mScriptType = UIScriptCreateConfig.ScriptType.View,
+            mCover = true,
+            mCreate = true,
+            DefaultGetPathFunc = () => { return mViewPath; }
+        });
+        mScriptCreateConfigList.Add(new UIScriptCreateConfig()
+        {
+            mScriptType = UIScriptCreateConfig.ScriptType.Controller,
+            mCover = false,
+            mCreate = false,
+            DefaultGetPathFunc = () => { return mControllerPath; }
+        });
+        mScriptCreateConfigList.Add(new UIScriptCreateConfig()
+        {
+            mScriptType = UIScriptCreateConfig.ScriptType.Model,
+            mCover = false,
+            mCreate = false,
+            DefaultGetPathFunc = () => { return mModelPath; }
+        });
+        mScriptCreateConfigList.Add(new UIScriptCreateConfig()
+        {
+            mScriptType = UIScriptCreateConfig.ScriptType.Proxy,
+            mCover = false,
+            mCreate = false,
+            DefaultGetPathFunc = () => { return mProxyPath; }
+        });
+        mScriptCreateConfigList.Add(new UIScriptCreateConfig()
+        {
+            mScriptType = UIScriptCreateConfig.ScriptType.Manager,
+            mCover = false,
+            mCreate = false,
+            DefaultGetPathFunc = () => { return mManagerPath; }
+        });
 
     }
 
@@ -161,20 +197,20 @@ public class UIScriptCreatorManager
     private void ParseViewScriptData()
     {
 
-            if (File.Exists(mViewPath) == false)
-                return;
+        if (File.Exists(mViewPath) == false)
+            return;
 
-            string tViewContent = File.ReadAllText(mViewPath);
+        string tViewContent = File.ReadAllText(mViewPath);
 
-            string tStartTag = @"{//CheckNullElementStartTag";
-            string tEndTag = @"};//CheckNullElementEndTag";
+        string tStartTag = @"{//CheckNullElementStartTag";
+        string tEndTag = @"};//CheckNullElementEndTag";
 
-            int tStartIndex = tViewContent.IndexOf(tStartTag) + tStartTag.Length;
-            int tCount = tViewContent.IndexOf(tEndTag) - tStartIndex;
+        int tStartIndex = tViewContent.IndexOf(tStartTag) + tStartTag.Length;
+        int tCount = tViewContent.IndexOf(tEndTag) - tStartIndex;
 
-            string tContent = tViewContent.Substring(tStartIndex, tCount);
-            string[] tLineSplitStrArr = tContent.Split('\n');
-         
+        string tContent = tViewContent.Substring(tStartIndex, tCount);
+        string[] tLineSplitStrArr = tContent.Split('\n');
+
         for (int i = 0; i < tLineSplitStrArr.Length; ++i)
         {
             string tLineStr = tLineSplitStrArr[i];
@@ -185,10 +221,10 @@ public class UIScriptCreatorManager
 
             string[] tDotSplitStrArr = tLineStr.Split(',');
 
-            string tPattern = "\"[\\S\\s]+?\"";
-
-            string tPathStr = Regex.Match(tDotSplitStrArr[0], tPattern).Value.Replace("\"", "");
-            string tTypeName = Regex.Match(tDotSplitStrArr[1], tPattern).Value.Replace("\"", "");
+            string tPattern = "\".*?\"";
+            MatchCollection tCollection = Regex.Matches(tLineStr, tPattern);
+            string tPathStr = tCollection[0].Value.Replace("\"", "");
+            string tTypeName = tCollection[1].Value.Replace("\"", "");
 
             int tGoNameStartIndex = tPathStr.LastIndexOf("/") + 1;
             string tGoName = tPathStr.Substring(tGoNameStartIndex);
@@ -226,7 +262,7 @@ public class UIScriptCreatorManager
 
         tTypeNameList.Add(mGoTypeName);
 
-        Component[] tComponentArray =  tChild.GetComponents<Component>();
+        Component[] tComponentArray = tChild.GetComponents<Component>();
         if (tComponentArray == null || tComponentArray.Length < 0)
             return tTypeNameList;
 
@@ -239,12 +275,13 @@ public class UIScriptCreatorManager
     }
 
     #region 元素状态判断
+
     /// <summary>
     /// 是否已添加
     /// </summary>
     public bool IsAdd(GameObject pGo, string pType)
     {
-       UIElementData tElement = GetUIElementData(pGo, pType);
+        UIElementData tElement = GetUIElementData(pGo, pType);
         if (tElement == null)
             return false;
 
@@ -287,6 +324,7 @@ public class UIScriptCreatorManager
     #endregion
 
     #region 通用辅助部分
+
     /// <summary>
     /// 获取变量名, 对象做参数
     /// </summary>
@@ -295,7 +333,7 @@ public class UIScriptCreatorManager
         if (pGo == null)
             return null;
 
-       string tName =  GetVariableNameByStr(pGo.name, pTypeName);
+        string tName = GetVariableNameByStr(pGo.name, pTypeName);
 
         return tName;
     }
@@ -312,9 +350,11 @@ public class UIScriptCreatorManager
 
         return tName;
     }
+
     #endregion
 
     #region 操作数据的函数
+
     /// <summary>
     /// 将该名字 添加进待删列表 或 从待删列表中删除 
     /// </summary>
@@ -327,7 +367,7 @@ public class UIScriptCreatorManager
         if (tHave)
             mWaitToDelectList.Remove(pName);
         else
-            mWaitToDelectList.Add(pName);            
+            mWaitToDelectList.Add(pName);
     }
 
     /// <summary>
@@ -366,7 +406,7 @@ public class UIScriptCreatorManager
     /// </summary>
     public int DeleteWaitTodelete()
     {
-        int tCount = 0; 
+        int tCount = 0;
         foreach (string tName in mWaitToDelectList)
         {
             ++tCount;
@@ -390,15 +430,15 @@ public class UIScriptCreatorManager
         foreach (var tKv in mUIElementDic)
         {
             UIElementData tUiElementData = tKv.Value;
-            if(tUiElementData.mState != UIElementData.eState.Go_Type_PathError)
+            if (tUiElementData.mState != UIElementData.eState.Go_Type_PathError)
                 continue;
 
             string tOldName = tUiElementData.mVarName;
             tUiElementData.UpdateDataByGo();
 
-            if(tOldName == tUiElementData.mVarName)
+            if (tOldName == tUiElementData.mVarName)
                 continue;
-            
+
             tOldNameList.Add(tOldName);
             tNewNameUIElementDataList.Add(tUiElementData);
         }
@@ -437,9 +477,11 @@ public class UIScriptCreatorManager
             }
         }
     }
+
     #endregion
 
     #region 获取数据
+
     /// <summary>
     /// 获取元素
     /// </summary>
@@ -463,6 +505,7 @@ public class UIScriptCreatorManager
             tUIElementData.UpdateGo();
         }
     }
+
     public void RefreshUIElementState()
     {
         foreach (var tKv in mUIElementDic)
@@ -481,15 +524,15 @@ public class UIScriptCreatorManager
     public List<UIElementData> GetElementListByFilterStr(string pFilterStr)
     {
         string tLowFilterStr = pFilterStr == null ? "" : pFilterStr.ToLower();
-        
+
         List<UIElementData> tElementList = new List<UIElementData>();
         foreach (var tKv in mUIElementDic)
         {
             UIElementData tElement = tKv.Value;
             string tLowName = tElement.mVarName.ToLower();
-            if(tLowName.Contains(tLowFilterStr) == false)
+            if (tLowName.Contains(tLowFilterStr) == false)
                 continue;
-        
+
             tElementList.Add(tKv.Value);
         }
 
@@ -537,7 +580,7 @@ public class UIScriptCreatorManager
 
         //特定的代码部分替换
         Func<string, string> tRepaceFunc = null;
-        switch(tConfig.mScriptType)
+        switch (tConfig.mScriptType)
         {
             case UIScriptCreateConfig.ScriptType.View:
                 tRepaceFunc = ReplaceViewTag;
@@ -595,9 +638,12 @@ public class UIScriptCreatorManager
         {
             UIElementData tUIElementData = tKv.Value;
 
-            tMemberTagSb.AppendLine(string.Format("{0,4}{1}  {2};", " ", tUIElementData.mTypeName, tUIElementData.mVarName ));
+            tMemberTagSb.AppendLine(string.Format("{0,4}{1}  {2};", " ", tUIElementData.mTypeName,
+                tUIElementData.mVarName));
 
-            tCheckNullTabSb.AppendLine(string.Format("{0,13}{{\"{1}\",\"{2}\"}},", " ", tUIElementData.mPath, tUIElementData.mTypeName));
+            tCheckNullTabSb.AppendLine(string.Format(
+                "{0,13}tElementDic.Add(new KeyValuePair<string, string>(\"{1}\",\"{2}\"));", " ", tUIElementData.mPath,
+                tUIElementData.mTypeName));
 
             if (tUIElementData.mTypeName == mGoTypeName)
             {
@@ -606,7 +652,8 @@ public class UIScriptCreatorManager
             }
             else
             {
-                tBindElementTagTag.AppendLine(string.Format("{0,8}{1} = mRootTransform.Find(\"{2}\").GetComponent<{3}>();",
+                tBindElementTagTag.AppendLine(string.Format(
+                    "{0,8}{1} = mRootTransform.Find(\"{2}\").GetComponent<{3}>();",
                     " ", tUIElementData.mVarName, tUIElementData.mPath, tUIElementData.mTypeName));
             }
         }

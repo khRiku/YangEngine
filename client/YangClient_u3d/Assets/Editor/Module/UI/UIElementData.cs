@@ -45,7 +45,7 @@ public class UIElementData
         return tGoTransform.gameObject;
     }
 
-    public object GetTypeInstance()
+    public UnityEngine.Object GetTypeInstance()
     {
         GameObject tGo = GetGo();
         if (tGo == null)
@@ -120,7 +120,7 @@ public class UIElementData
     public bool IsGo_TypeNull()
     {
         GameObject tGo = GetGo();
-        object tComponent = GetTypeInstance();
+        UnityEngine.Object tComponent = GetTypeInstance();
 
         if (tGo != null && tComponent == null)
             return true;

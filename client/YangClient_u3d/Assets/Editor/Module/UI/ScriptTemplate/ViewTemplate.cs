@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ViewTemplate
 {
     public GameObject mRootGo { get; private set; }
@@ -38,11 +38,11 @@ public class ViewTemplate
     private void CheckNull()
     {
         //key: path, value; tyep name
-        Dictionary<string, string> tElementDic = new Dictionary<string, string>()
+        List<KeyValuePair<string, string>> tElementDic = new List<KeyValuePair<string, string>>();
         {//CheckNullElementStartTag
 
 //CheckNullTag   
-            
+
         };//CheckNullElementEndTag
 
         StringBuilder tSb = new StringBuilder();
@@ -69,7 +69,7 @@ public class ViewTemplate
         }
 
         string tErrorInfo = tSb.ToString();
-        if (string.IsNullOrEmpty(tErrorInfo))
+        if (string.IsNullOrEmpty(tErrorInfo) == false)
         {
             Debug.LogError(string.Format("{0}\n{1}", "ViewTemplate 绑定的元素丢失, 请打开工具检查， 问题元素如下：", tErrorInfo));
         }
