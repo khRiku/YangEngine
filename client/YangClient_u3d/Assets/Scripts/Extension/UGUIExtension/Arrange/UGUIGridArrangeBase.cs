@@ -43,4 +43,9 @@ public abstract class UGUIGridArrangeBase
     /// 获取 Content 的位置（定位到指定的dataIndex）
     /// </summary>
     public abstract Vector2 GetFixAnchorPos(int pDataIndex, int pPosType);
+
+    /// <summary>
+    /// 调整坐标位置, 确保位置不超出合理值
+    /// </summary>
+    public abstract Vector2 AdjustAnchorPos(Vector2 pAnchorPos);
 }

@@ -102,12 +102,22 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
                 break;
         }
 
-        float tMaxYPos = mGridWrapContent.mRectTransform.rect.height
-                         - mGridWrapContent.mScrollRectTransform.rect.height;
+        float tMaxYPos = GetMaxYPos();
 
         float tMinPos = Mathf.Min(tMaxYPos, tYPos);
     
         return new Vector2(0, tMinPos);
+    }
+
+    public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
+    {
+        float tMaxYPos = GetMaxYPos();
+        Vector2 tAdjustAnchorPos = pAnchorPos;
+
+        if (tAdjustAnchorPos.y > tMaxYPos)
+            tAdjustAnchorPos.y = tMaxYPos;
+
+        return tAdjustAnchorPos;
     }
 
     #region 辅助函数
@@ -122,5 +132,21 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
         return tYIndex;
     }
 
+    /// <summary>
+    /// 获取可设置的最小 x 值
+    /// </summary>
+    /// <returns></returns>
+    public float GetMaxYPos()
+    {
+        float tDataHeight = mGridWrapContent.mRectTransform.rect.height;
+        float tViewHeight = mGridWrapContent.mScrollRectTransform.rect.height;
+
+        if (tViewHeight > tDataHeight)
+            return 0;
+
+        float tMaxYPos = tDataHeight - tViewHeight;
+
+        return tMaxYPos;
+    }
     #endregion
 }

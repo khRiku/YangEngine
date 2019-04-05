@@ -1,27 +1,20 @@
-ï»¿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//å·¦å³æ’åˆ—ï¼Œ é¡µçš„å½¢å¼ï¼Œ è·Ÿæ‰‹æœºçš„ä¸€æ ·ï¼Œ é€‚ç”¨äºå·¦å³æ»šåŠ¨çš„æƒ…å†µ
+//×óÓÒÅÅÁĞ£¬ Ò³µÄĞÎÊ½£¬ ¸úÊÖ»úµÄÒ»Ñù£¬ ÊÊÓÃÓÚ×óÓÒ¹ö¶¯µÄÇé¿ö
 public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 {
-    public int mPageCellCount { get; private set; }      //æ¯é¡µæœ‰å¤šå°‘ä¸ªcell
+    public int mPageCellCount { get; private set; }      //Ã¿Ò³ÓĞ¶àÉÙ¸öcell
+    public int mPageCount;              //ÓĞ¶àÉÙÒ³
+    public Vector2 mPageSize;           //Ã¿Ò»Ò³µÄ³¤¿í
 
-    //æœ‰å¤šå°‘é¡µ
-    public int mPageCount
-    {
-        get
-        {
-            if (mGridWrapContent == null || mGridWrapContent.mConfig == null || mGridWrapContent.mConfig.mDataCnt <= 0)
-                return 0;
-
-            return Mathf.CeilToInt(mGridWrapContent.mConfig.mDataCnt / mPageCellCount);
-        }
-    }       
 
     public UGUIGridArrangeHorizontalPage(UGUIGridWrapContent pGridWrapContent) : base(pGridWrapContent)
     {
         mPageCellCount = mGridWrapContent.mVerticalCnt * mGridWrapContent.mHorizontalCnt;
+        mPageCount = Mathf.CeilToInt((float)mGridWrapContent.mConfig.mDataCnt / (float)mPageCellCount);
+        mPageSize = new Vector2( mGridWrapContent.mHorizontalCnt * mGridWrapContent.mCellWidth,mGridWrapContent.mVerticalCnt * mGridWrapContent.mCellHeight );
     }
 
     public override void AdjustContentSize()
@@ -40,99 +33,153 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
         int tViewLine = Mathf.CeilToInt(tViewPortWidth / mGridWrapContent.mCellWidth);
         int tTotalLine = tViewLine + UGUIGridArrangeBase.mExtraLine;
 
-        int tCount = tTotalLine * mGridWrapContent.mHorizontalCnt;
+        int tCount = tTotalLine * mGridWrapContent.mVerticalCnt;
 
         return tCount;
     }
 
     public override Vector2 GetAnchorPosByDataIndex(int pDataIndex)
     {
-       //TODO:YXX  åšåˆ°è¿™ä¸ªå‡½æ•°ï¼Œ åé¢å¼€å§‹å¤„ç†è¿™ä¸ªå‡½æ•°
-        int tXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;
-        int tYIndex = GetYindexByDataIndex(pDataIndex);
+        int tPageIndex = Mathf.CeilToInt(pDataIndex / mPageCellCount);       //Ò³Ë÷Òı
+        int tLastPageXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;  //ÒÔ×îºóÒ»Ò³Îª»ù×¼µÄ X Ë÷Òı
+        int tLastPageYIndex = Mathf.CeilToInt((pDataIndex - tPageIndex * mPageCellCount)/mGridWrapContent.mHorizontalCnt);       //ÒÔ×îºóÒ»Ò³Îª»ù×¼µÄ Y Ë÷Òı
 
-        float tXPos = tXIndex * mGridWrapContent.mCellWidth + mGridWrapContent.mOffsetX;
-        float tYPos = -tYIndex * mGridWrapContent.mCellHeight + mGridWrapContent.mOffsetY;
+        float tXPos = tPageIndex * mPageSize.x + tLastPageXIndex * mGridWrapContent.mCellWidth;
+        float tYPos = -tLastPageYIndex * mGridWrapContent.mCellHeight;
 
         return new Vector2(tXPos, tYPos);
     }
 
     public override int GetNewStartDataIndex()
     {
-        float tOffsetY = mGridWrapContent.mRectTransform.anchoredPosition.y;
-        if (tOffsetY < 0)
-            tOffsetY = 0;
+        float tOffsetX = -mGridWrapContent.mRectTransform.anchoredPosition.x;
+        if (tOffsetX < 0)
+            tOffsetX = 0;
 
-        int tOffsetLine = Mathf.FloorToInt(tOffsetY / mGridWrapContent.mCellHeight);
+        int tOffsetLine = Mathf.FloorToInt(tOffsetX / mGridWrapContent.mCellWidth);
+        if (tOffsetLine <= 1)
+            tOffsetLine = 0;
 
-        int tLineIndex = tOffsetLine <= 1 ? 0 : tOffsetLine - 1;
+        int tOffsetPageIndex = Mathf.FloorToInt(tOffsetLine / mGridWrapContent.mHorizontalCnt);
+        int tLastPageXIndex = tOffsetLine % mGridWrapContent.mHorizontalCnt;
 
-        int tStartIndex = tLineIndex * mGridWrapContent.mHorizontalCnt;
+
+        int tStartIndex = tOffsetPageIndex * mPageCellCount + tLastPageXIndex;
 
         return tStartIndex;
-
     }
 
     public override List<int> GetNewDataIndexList()
     {
-        int tStartDataIndex = GetNewStartDataIndex();
-        int tCellCount = GetCellsCountByViewSize();
-
         int tDataCount = mGridWrapContent.mConfig.mDataCnt;
 
+        int tStartDataIndex = GetNewStartDataIndex();
+        Vector2 tStartAnchorPos = GetAnchorPosByDataIndex(tStartDataIndex);
+        Debug.LogError("ÆğÊ¼index = " + tStartDataIndex);
+        int tCellCount = GetCellsCountByViewSize();
         List<int> tNewDataIndexList = new List<int>();
         for (int i = 0; i < tCellCount; ++i)
         {
-            int tNewDataIndex = tStartDataIndex + i;
+            int tXAddPos = Mathf.FloorToInt((float)i / (float)mGridWrapContent.mVerticalCnt);
+            int tYAddPos = i % mGridWrapContent.mVerticalCnt;
+
+            tStartAnchorPos.x += tXAddPos * mGridWrapContent.mCellWidth;
+            tStartAnchorPos.y += tYAddPos * mGridWrapContent.mCellHeight;
+
+            int tNewDataIndex = GetDataIndexByPos(tStartAnchorPos);
+          
             if (tNewDataIndex >= tDataCount)
+            {
+                Debug.LogError("³¬¹ıµÄ dataindex = " + tNewDataIndex);
                 break;
+            }
+            Debug.LogError("i = " + i + "ĞÂµÄ dataindex = " + tNewDataIndex + "   tStartAnchorPos = " + tStartAnchorPos);
 
             tNewDataIndexList.Add(tNewDataIndex);
         }
-
         return tNewDataIndexList;
+    }
+
+    public int GetDataIndexByPos(Vector2 pAnchorPos)
+    {
+        int tPageCount = Mathf.FloorToInt(pAnchorPos.x / mPageSize.x);
+        int tLastPageXCount =Mathf.FloorToInt((pAnchorPos.x - tPageCount * mPageSize.x)/mGridWrapContent.mCellWidth);
+        int tLastPageYCount =Mathf.FloorToInt(pAnchorPos.y /mGridWrapContent.mCellHeight);
+
+        int tNewDataIndex = tPageCount * mPageCount + tLastPageXCount + tLastPageYCount * mGridWrapContent.mHorizontalCnt;
+
+        return tNewDataIndex;
     }
 
     public override Vector2 GetFixAnchorPos(int pDataIndex, int pPosType)
     {
-        int tYIndex = GetYindexByDataIndex(pDataIndex);
-        float tYPos = tYIndex * mGridWrapContent.mCellHeight;
+        int tXIndex = GetXIndexByDataIndex(pDataIndex);
+        float tXPos = -tXIndex * mGridWrapContent.mCellWidth;
 
         switch (pPosType)
         {
             case (int)UGUIGridWrapContent.FixPosType.Center:
-                tYPos = (float)(tYPos - mGridWrapContent.mScrollRectTransform.rect.height * 0.5 + mGridWrapContent.mCellHeight * 0.5);
+                tXPos = (float)(tXPos + mGridWrapContent.mScrollRectTransform.rect.width * 0.5 - mGridWrapContent.mCellWidth * 0.5);
                 break;
 
             case (int)UGUIGridWrapContent.FixPosType.Last:
-                tYPos = (float)(tYPos - mGridWrapContent.mScrollRectTransform.rect.height + mGridWrapContent.mCellHeight);
+                tXPos = (float)(tXPos + mGridWrapContent.mScrollRectTransform.rect.width - mGridWrapContent.mCellWidth);
                 break;
 
             default:
-                float tOffsetPos = (pPosType - 1) * mGridWrapContent.mCellHeight;
-                tYPos = tYPos - tOffsetPos;
+                float tOffsetPos = (pPosType - 1) * mGridWrapContent.mCellWidth;
+                tXPos = tXPos + tOffsetPos;
                 break;
         }
 
-        float tMaxYPos = mGridWrapContent.mRectTransform.rect.height
-                         - mGridWrapContent.mScrollRectTransform.rect.height;
+        float tMinXPos = GetMinXPos();
 
-        float tMinPos = Mathf.Min(tMaxYPos, tYPos);
+        float tMaxPos = Mathf.Max(tMinXPos, tXPos);
 
-        return new Vector2(0, tMinPos);
+        return new Vector2(tMaxPos, 0);
     }
 
-    #region è¾…åŠ©å‡½æ•°
+    public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
+    {
+        float tMinXPos = GetMinXPos();
+        Vector2 tAdjustAnchorPos = pAnchorPos;
+
+        if (tAdjustAnchorPos.x < tMinXPos)
+            tAdjustAnchorPos.x = tMinXPos;
+
+        return tAdjustAnchorPos;
+    }
+
+    #region ¸¨Öúº¯Êı
 
     /// <summary>
-    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å– y ä½ç½®çš„ç´¢å¼•
+    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
     /// </summary>
-    private int GetYindexByDataIndex(int pDataIndex)
+    private int GetXIndexByDataIndex(int pDataIndex)
     {
-        int tYIndex = Mathf.FloorToInt(pDataIndex / mGridWrapContent.mHorizontalCnt);
+        int tPageIndex = Mathf.FloorToInt(pDataIndex / mPageCellCount);
+        int tXIndex = tPageIndex * mGridWrapContent.mHorizontalCnt + pDataIndex % mGridWrapContent.mHorizontalCnt;
 
-        return tYIndex;
+        return tXIndex;
+    }
+
+    /// <summary>
+    /// »ñÈ¡¿ÉÉèÖÃµÄ×îĞ¡ x Öµ
+    /// </summary>
+    /// <returns></returns>
+    public float GetMinXPos()
+    {
+        float tDataWidth = mGridWrapContent.mRectTransform.rect.width;
+        float tViewWidth = mGridWrapContent.mScrollRectTransform.rect.width;
+
+        if (tViewWidth > tDataWidth)
+            return 0;
+
+        float tMinXPos = -tDataWidth + mGridWrapContent.mScrollRectTransform.rect.width;
+
+        return tMinXPos;
     }
 
     #endregion
 }
+

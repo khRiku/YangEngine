@@ -1,9 +1,9 @@
-ï»¿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ä»ä¸Šåˆ°ä¸‹çš„æ’åˆ—ï¼Œ é€‚ç”¨äºå·¦å³æ»šåŠ¨çš„æƒ…å†µ
+/// ´ÓÉÏµ½ÏÂµÄÅÅÁĞ£¬ ÊÊÓÃÓÚ×óÓÒ¹ö¶¯µÄÇé¿ö
 /// </summary>
 public class UGUIGridArrangeVertical : UGUIGridArrangeBase
 {
@@ -27,7 +27,7 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         int tViewLine = Mathf.CeilToInt(tViewPortWidth / mGridWrapContent.mCellWidth);
         int tTotalLine = tViewLine + UGUIGridArrangeBase.mExtraLine;
 
-        int tCount = tTotalLine * mGridWrapContent.mHorizontalCnt;
+        int tCount = tTotalLine * mGridWrapContent.mVerticalCnt;
 
         return tCount;
     }
@@ -99,24 +99,51 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
                 break;
         }
 
-        float tMinXPos = -mGridWrapContent.mRectTransform.rect.width
-                         + mGridWrapContent.mScrollRectTransform.rect.width;
+        float tMinXPos = GetMinXPos();
 
         float tMaxPos = Mathf.Max(tMinXPos, tXPos);
 
         return new Vector2(tMaxPos, 0);
     }
 
-    #region è¾…åŠ©å‡½æ•°
+    public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
+    {
+        float tMinXPos = GetMinXPos();
+        Vector2 tAdjustAnchorPos = pAnchorPos;
+
+        if (tAdjustAnchorPos.x < tMinXPos)
+            tAdjustAnchorPos.x = tMinXPos;
+
+        return tAdjustAnchorPos;
+    }
+
+    #region ¸¨Öúº¯Êı
 
     /// <summary>
-    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å– y ä½ç½®çš„ç´¢å¼•
+    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
     /// </summary>
     private int GetXIndexByDataIndex(int pDataIndex)
     {
         int tXIndex = Mathf.FloorToInt(pDataIndex / mGridWrapContent.mVerticalCnt);
 
         return tXIndex;
+    }
+
+    /// <summary>
+    /// »ñÈ¡¿ÉÉèÖÃµÄ×îĞ¡ x Öµ
+    /// </summary>
+    /// <returns></returns>
+    public float GetMinXPos()
+    {
+        float tDataWidth = mGridWrapContent.mRectTransform.rect.width;
+        float tViewWidth = mGridWrapContent.mScrollRectTransform.rect.width;
+
+        if (tViewWidth > tDataWidth)
+            return 0;
+
+        float tMinXPos = -tDataWidth + mGridWrapContent.mScrollRectTransform.rect.width;
+
+        return tMinXPos;
     }
 
     #endregion

@@ -43,7 +43,7 @@ public class UGUIGridWrapContentInspector : Editor
                 tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "垂直方向，每列有几个"), tGridWrapContent.mHorizontalCnt);
                 break;
 
-            case UGUIGridWrapContent.ArrangeType.VerticalPage:
+            case UGUIGridWrapContent.ArrangeType.HorizontalPage:
                 tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "水平方向，每行有几个"), tGridWrapContent.mVerticalCnt);
                 tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "垂直方向，每列有几个"), tGridWrapContent.mHorizontalCnt);
 

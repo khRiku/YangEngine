@@ -49,7 +49,7 @@ public class UGUIGridWrapContent : MonoBehaviour
     ///     2  5
     ///     3  6
     ///
-    /// VerticalPage：
+    /// HorizontalPage：
     ///     1  2  3  10  11  12
     ///     4  5  6  13  14
     ///     7  8  9
@@ -58,7 +58,7 @@ public class UGUIGridWrapContent : MonoBehaviour
     {
         Horizontal,       // 从左到右
         Vertical,         // 从上到下
-        VerticalPage,     // 从左到右， 页的形式
+        HorizontalPage,     // 从左到右， 页的形式
     }
     #endregion
 
@@ -141,6 +141,13 @@ public class UGUIGridWrapContent : MonoBehaviour
         int i = 0; 
         while (true)
         {
+            ++i;
+            if (i > 150)
+            {
+                Debug.LogError("cell 刷新位置时，循环次数超出150次， 不合理， 已退出");
+                return;
+            }
+
             //找出新的 数据索引
             int tNewDataIndex = -1;
             for (; tNewI < tNewDataIndexList.Count; ++tNewI)
@@ -206,7 +213,7 @@ public class UGUIGridWrapContent : MonoBehaviour
             case ArrangeType.Horizontal:
                 return new UGUIGridArrangeHorizontal(this);
 
-            case ArrangeType.VerticalPage:
+            case ArrangeType.HorizontalPage:
                 return new UGUIGridArrangeHorizontalPage(this);
 
             case ArrangeType.Vertical:
@@ -263,6 +270,8 @@ public class UGUIGridWrapContent : MonoBehaviour
         mDataIndexList.Clear();
         mCellDic.Clear();
 
+        List<int> tNewDataIndexList = mGridArrangeBase.GetNewDataIndexList();
+
         //创建cell
         int i = 0;
         for (; i < tInstanceCnt; ++i)
@@ -282,17 +291,18 @@ public class UGUIGridWrapContent : MonoBehaviour
                 mCellList.Add(tCell);
             }
 
-            mDataIndexList.Add(i);
-            mCellDic.Add(i, tCell);
+            int tDataIndex = tNewDataIndexList[i];
+            mDataIndexList.Add(tDataIndex);
+            mCellDic.Add(tDataIndex, tCell);
 
             RectTransform tRectTransform = tCell.transform as RectTransform;
 
             if (mCellOffsetPos.x == float.MaxValue)
                 mCellOffsetPos = GetCellOffsetValue(tRectTransform);
 
-            tRectTransform.anchoredPosition = GetAnchorPosByDataIndex(i);
+            tRectTransform.anchoredPosition = GetAnchorPosByDataIndex(tDataIndex);
 
-            mConfig.mDisplayCellAction(i, tCell);
+            mConfig.mDisplayCellAction(tDataIndex, tCell);
         }
 
         //隐藏多余的cell
@@ -355,6 +365,12 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     public void RepositionCellInEditor()
     {
+        //一下{}的代码随便处理的， 否则 UGUIGridArrageHorizontalPage 中会用到 mConfig 然后报错。 后面如有其它问题再看
+        {
+            this.mConfig = new UGUIGridWrapContentConfig();
+            mConfig.mDataCnt = 30;
+        }
+
         mGridArrangeBase = GetGridArrangeInstance();
 
         for (int i = 0; i < this.transform.childCount; ++i)
@@ -392,5 +408,87 @@ public class UGUIGridWrapContent : MonoBehaviour
         RefreshAllCellPos();
     }
 
+    // <summary>
+    /// 改变数据量， 并重新刷新cell 的显示， 会保留当前的滑动状态
+    /// </summary>
+    /// <param name="pFixToLast">修改后， 自动定位到最后一个</param>
+    public void ChangeDataCount(int pCount, bool pFixToLast = false)
+    {
+        Vector2 tCurPos = mRectTransform.anchoredPosition;
+
+        mConfig.mDataCnt = pCount;
+        Show(mConfig);
+
+        if (pFixToLast)
+        {
+            FixToDataIndex(pCount - 1, (int)FixPosType.Last);
+        }
+        else
+        {
+            mRectTransform.anchoredPosition = mGridArrangeBase.AdjustAnchorPos(tCurPos);
+        }
+    }
+
+    /// <summary>
+    ///刷新所有cell 的显示
+    /// </summary>
+    public void RefreshAll()
+    {
+        for (int i = 0; i < mDataIndexList.Count; ++i)
+        {
+            int tDataIndex = mDataIndexList[i];
+            GameObject tGo = mCellDic[tDataIndex];
+            mConfig.mDisplayCellAction(tDataIndex, tGo);
+        }
+    }
+
+    /// <summary>
+    /// 通过数据索引刷新指定的cell
+    /// </summary>
+    public void RefrehsByDataIndex(int pDataIndex)
+    {
+        if (mDataIndexList.Contains(pDataIndex) == false)
+            return;
+
+        GameObject pGo = mCellDic[pDataIndex];
+        mConfig.mDisplayCellAction(pDataIndex, pGo);
+    }
+
+    /// <summary>
+    /// 通过GameObject索引刷新指定的cell
+    /// </summary>
+    public void RefrehsByGameObject(GameObject pGo)
+    {
+        int tDataIndex = GetDataIndexByGo(pGo);
+        if (tDataIndex < 0)
+            return;
+
+        mConfig.mDisplayCellAction(tDataIndex, pGo);
+    }
+
+    /// <summary>
+    /// 根据 Go 来获取数据索引（不同的滑动状态， 同一Go可能会对应不同的DataIndex)
+    /// </summary>
+    public int GetDataIndexByGo(GameObject pGo)
+    {
+        foreach (var tKv in mCellDic)
+        {
+            if (tKv.Value == pGo)
+                return tKv.Key;
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// 根据数据索引获取Go, 可能为空(该数据索引暂时没有与之对应的Go)
+    /// </summary>
+    public GameObject GetGoByDataIndex(int pDataIndex)
+    {
+        GameObject tGo = null;
+        mCellDic.TryGetValue(pDataIndex, out tGo);
+
+        return tGo;
+    }
     #endregion
 }
