@@ -48,4 +48,14 @@ public abstract class UGUIGridArrangeBase
     /// 调整坐标位置, 确保位置不超出合理值
     /// </summary>
     public abstract Vector2 AdjustAnchorPos(Vector2 pAnchorPos);
+
+    /// <summary>
+    /// 获取可滑动的最大滑动补足索引
+    /// </summary>
+    public abstract int GetMaxDragSupplementIndex();
+
+    /// <summary>
+    /// 获取索引对应的位置
+    /// </summary>
+    public abstract Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex);
 }

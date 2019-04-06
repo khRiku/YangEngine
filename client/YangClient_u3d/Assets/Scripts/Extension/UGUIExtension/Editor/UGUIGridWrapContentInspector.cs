@@ -61,9 +61,17 @@ public class UGUIGridWrapContentInspector : Editor
         tGridWrapContent.mOffsetX = EditorGUILayout.IntField("X Offset", tGridWrapContent.mOffsetX);
         tGridWrapContent.mOffsetY = EditorGUILayout.IntField("Y Offset", tGridWrapContent.mOffsetY);
 
+        tGridWrapContent.mEnaleDragSupplement = EditorGUILayout.Toggle("开启滑动补足", tGridWrapContent.mEnaleDragSupplement);
+        if (tGridWrapContent.mEnaleDragSupplement)
+        {
+            tGridWrapContent.mDrageSupplementVelocity = EditorGUILayout.Slider("滑动补足速度", tGridWrapContent.mDrageSupplementVelocity,0f, 1f);
+        }
 
         if (GUI.changed == true)
         {
+            if (Application.isPlaying)
+                return;
+
             tGridWrapContent.RepositionCellInEditor();
         }
 

@@ -37,8 +37,8 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         int tXIndex = GetXIndexByDataIndex(pDataIndex);
         int tYIndex = pDataIndex % mGridWrapContent.mVerticalCnt;
 
-        float tXPos = tXIndex * mGridWrapContent.mCellWidth + mGridWrapContent.mOffsetX;
-        float tYPos = -tYIndex * mGridWrapContent.mCellHeight + mGridWrapContent.mOffsetY;
+        float tXPos = tXIndex * mGridWrapContent.mCellWidth;
+        float tYPos = -tYIndex * mGridWrapContent.mCellHeight;
 
         return new Vector2(tXPos, tYPos);
     }
@@ -100,7 +100,6 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         }
 
         float tMinXPos = GetMinXPos();
-
         float tMaxPos = Mathf.Max(tMinXPos, tXPos);
 
         return new Vector2(tMaxPos, 0);
@@ -115,6 +114,23 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
             tAdjustAnchorPos.x = tMinXPos;
 
         return tAdjustAnchorPos;
+    }
+
+    public override int GetMaxDragSupplementIndex()
+    {
+        int tMaxIndex = Mathf.CeilToInt(mGridWrapContent.mRectTransform.rect.width / mGridWrapContent.mViewPortRectTransform.rect.width);
+
+        return tMaxIndex;
+    }
+
+    public override Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex)
+    {
+        float tXPos = -pDragSuppleMentIndex * mGridWrapContent.mViewPortRectTransform.rect.width;
+        float tMinXPos = GetMinXPos();
+
+        float tTargetXPos = Mathf.Max(tXPos, tMinXPos);
+
+        return new Vector2(tTargetXPos, 0f);
     }
 
     #region ¸¨Öúº¯Êý

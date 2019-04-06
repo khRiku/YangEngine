@@ -75,7 +75,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
         int tStartDataIndex = GetNewStartDataIndex();
         Vector2 tStartAnchorPos = GetAnchorPosByDataIndex(tStartDataIndex);
-        Debug.LogError("起始index = " + tStartDataIndex);
+     //   Debug.LogError("起始index = " + tStartDataIndex);
         int tCellCount = GetCellsCountByViewSize();
         List<int> tNewDataIndexList = new List<int>();
         for (int i = 0; i < tCellCount; ++i)
@@ -83,32 +83,22 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
             int tXAddPos = Mathf.FloorToInt((float)i / (float)mGridWrapContent.mVerticalCnt);
             int tYAddPos = i % mGridWrapContent.mVerticalCnt;
 
-            tStartAnchorPos.x += tXAddPos * mGridWrapContent.mCellWidth;
-            tStartAnchorPos.y += tYAddPos * mGridWrapContent.mCellHeight;
+            Vector2 tAnchorPos = new Vector2(
+                tStartAnchorPos.x + tXAddPos * mGridWrapContent.mCellWidth,
+                tStartAnchorPos.y + tYAddPos * mGridWrapContent.mCellHeight);
 
-            int tNewDataIndex = GetDataIndexByPos(tStartAnchorPos);
-          
+            int tNewDataIndex = GetDataIndexByPos(tAnchorPos);
+
             if (tNewDataIndex >= tDataCount)
             {
-                Debug.LogError("超过的 dataindex = " + tNewDataIndex);
-                break;
+           //     Debug.LogError("超过的 dataindex = " + tNewDataIndex);
+                continue;
             }
-            Debug.LogError("i = " + i + "新的 dataindex = " + tNewDataIndex + "   tStartAnchorPos = " + tStartAnchorPos);
+         //   Debug.LogError("i = " + i + "新的 dataindex = " + tNewDataIndex + "   tAnchorPos = " + tAnchorPos);
 
             tNewDataIndexList.Add(tNewDataIndex);
         }
         return tNewDataIndexList;
-    }
-
-    public int GetDataIndexByPos(Vector2 pAnchorPos)
-    {
-        int tPageCount = Mathf.FloorToInt(pAnchorPos.x / mPageSize.x);
-        int tLastPageXCount =Mathf.FloorToInt((pAnchorPos.x - tPageCount * mPageSize.x)/mGridWrapContent.mCellWidth);
-        int tLastPageYCount =Mathf.FloorToInt(pAnchorPos.y /mGridWrapContent.mCellHeight);
-
-        int tNewDataIndex = tPageCount * mPageCount + tLastPageXCount + tLastPageYCount * mGridWrapContent.mHorizontalCnt;
-
-        return tNewDataIndex;
     }
 
     public override Vector2 GetFixAnchorPos(int pDataIndex, int pPosType)
@@ -133,7 +123,6 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
         }
 
         float tMinXPos = GetMinXPos();
-
         float tMaxPos = Mathf.Max(tMinXPos, tXPos);
 
         return new Vector2(tMaxPos, 0);
@@ -150,7 +139,37 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
         return tAdjustAnchorPos;
     }
 
+    public override int GetMaxDragSupplementIndex()
+    {
+        int tMaxIndex = Mathf.CeilToInt(mGridWrapContent.mRectTransform.rect.width / mGridWrapContent.mViewPortRectTransform.rect.width);
+
+        return tMaxIndex;
+    }
+
+    public override Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex)
+    {
+        float tXPos = -pDragSuppleMentIndex * mGridWrapContent.mViewPortRectTransform.rect.width;
+        float tMinXPos = GetMinXPos();
+
+        float tTargetXPos = Mathf.Max(tXPos, tMinXPos);
+
+        return new Vector2(tTargetXPos, 0f);
+    }
+
     #region 辅助函数
+    /// <summary>
+    /// 根据数据索引获取坐标位置
+    /// </summary>
+    public int GetDataIndexByPos(Vector2 pAnchorPos)
+    {
+        int tPageCount = Mathf.FloorToInt(pAnchorPos.x / mPageSize.x);
+        int tLastPageXCount = Mathf.FloorToInt((pAnchorPos.x - tPageCount * mPageSize.x) / mGridWrapContent.mCellWidth);
+        int tLastPageYCount = Mathf.FloorToInt(pAnchorPos.y / mGridWrapContent.mCellHeight);
+
+        int tNewDataIndex = tPageCount * mPageCellCount + tLastPageXCount + tLastPageYCount * mGridWrapContent.mHorizontalCnt;
+
+        return tNewDataIndex;
+    }
 
     /// <summary>
     /// 根据数据索引获取 y 位置的索引

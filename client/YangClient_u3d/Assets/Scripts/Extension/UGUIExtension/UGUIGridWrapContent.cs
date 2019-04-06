@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.Runtime.CompilerServices;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -34,7 +35,6 @@ public class UGUIGridWrapContent : MonoBehaviour
     public int mHorizontalCnt = 0;     //水平方向， 每行有几个
     public int mVerticalCnt = 0;       //垂直方向， 每列有几个
 
-
     //每个用户在制作 cell 的时候，锚点的情况多种多样，只要是标准的锚点类型, 可计算出偏移值， 屏蔽掉这个差异
     private Vector2 mCellOffsetPos = Vector2.zero;
 
@@ -56,8 +56,8 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     public enum ArrangeType
     {
-        Horizontal,       // 从左到右
-        Vertical,         // 从上到下
+        Horizontal,         // 从左到右
+        Vertical,           // 从上到下
         HorizontalPage,     // 从左到右， 页的形式
     }
     #endregion
@@ -72,6 +72,9 @@ public class UGUIGridWrapContent : MonoBehaviour
     public RectTransform mScrollRectTransform;
     public RectTransform mRectTransform;
     public RectTransform mViewPortRectTransform;
+
+    //事件监听
+    public UGUIGWCEventListenter mUGUIGWCEventListenter { get; private set; }
 
     public Vector2 mViewSize;              //可视区域的 长宽
 
@@ -92,11 +95,25 @@ public class UGUIGridWrapContent : MonoBehaviour
     void Awake()
     {
        CacheData();
+       RegisterEvent();
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
+        //if(mScrollRect.velocity != Vector2.zero)
+        //Debug.LogError(mScrollRect.velocity);
+
+        if (mGridArrangeBase == null)
+            return;
+
+        //滑动至指定位置的Tween动画
+        if (mStartScrollToTargetPos)
+            UpdateScrollToTarget();
+
+        //根据位置刷新Cell 的显示
         if (mPosition != this.transform.position)
         {
             //if (mPosChange == false)
@@ -113,7 +130,7 @@ public class UGUIGridWrapContent : MonoBehaviour
 
         }
 
-        if(mPosChange)
+        if (mPosChange)
             OnPosEndChange();
     }
 
@@ -202,9 +219,41 @@ public class UGUIGridWrapContent : MonoBehaviour
         mScrollRect = mViewPortRectTransform.parent.GetComponent<ScrollRect>();
         mScrollRectTransform = mScrollRect.transform as RectTransform;
 
+        mUGUIGWCEventListenter =  mScrollRect.GetComponent<UGUIGWCEventListenter>();
+        if (mUGUIGWCEventListenter == null)
+            mUGUIGWCEventListenter = mScrollRect.gameObject.AddComponent<UGUIGWCEventListenter>();
+
         //缓存数据
         mViewSize = new Vector2(mViewPortRectTransform.rect.width, mViewPortRectTransform.rect.height);
     }
+
+    #region 事件注册和响应
+    private void RegisterEvent()
+    {
+        mUGUIGWCEventListenter.mOnBeginDrag.AddListener(OnBeginDrag);
+        mUGUIGWCEventListenter.mOnEndDrag.AddListener(OnEndDrag);
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        Debug.LogError("OnBeginDrag");
+
+        mBeginDragAnchorPos = mRectTransform.anchoredPosition;
+        mBeginDragTime = Time.unscaledTime;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        Debug.LogError("OnEndDrag");
+
+        Vector2 tPosOffset = mRectTransform.anchoredPosition - mBeginDragAnchorPos;
+        float tTimeOffset = Time.unscaledTime - mBeginDragTime;
+
+        TrySupplementDrag(tPosOffset, tTimeOffset);
+    }
+
+    #endregion
+
 
     private UGUIGridArrangeBase GetGridArrangeInstance()
     {
@@ -220,6 +269,7 @@ public class UGUIGridWrapContent : MonoBehaviour
                 return new UGUIGridArrangeVertical(this);
         }
 
+        Debug.LogError("匹配不到对应的排序算法类  mArrangeType = " + mArrangeType);
         return null;
     }
 
@@ -234,6 +284,7 @@ public class UGUIGridWrapContent : MonoBehaviour
 
         mGridArrangeBase.AdjustContentSize();
         CreateAllCellInstance();
+        int a = 10;
     }
 
     //设置一些默认值
@@ -317,6 +368,9 @@ public class UGUIGridWrapContent : MonoBehaviour
         Vector2 tGridPos = mGridArrangeBase.GetAnchorPosByDataIndex(pDataIndex);
         Vector2 tAnchorPos = tGridPos + mCellOffsetPos;
 
+        tAnchorPos.x += mOffsetX;
+        tAnchorPos.y += mOffsetY;
+
         return tAnchorPos;
     }
 
@@ -334,25 +388,139 @@ public class UGUIGridWrapContent : MonoBehaviour
         Vector2 tTLAnchorValue = RectTransformExtension.GetAnchorTypeValue(RectTransformAnchorType.TopLeft).Key;
         Vector2 tAnchorOffset = tTLAnchorValue - tAnchorValue;
 
-        Vector2 tAnchorOffsetPos = new Vector2(mRectTransform.rect.width * tAnchorOffset.x,
-           mRectTransform.rect.height * tAnchorOffset.y);
+        Vector2 tAnchorOffsetPos = new Vector2(mRectTransform.rect.width * tAnchorOffset.x, mRectTransform.rect.height * tAnchorOffset.y);
 
         Vector2 tTLPivotValue = new Vector2(0, 1);
         Vector2 tPivotOffset = pCell.pivot - tTLPivotValue;
 
-        Vector2 tPivotOffsetPos = new Vector2(tPivotOffset.x * pCell.rect.width,
-            tPivotOffset.y * pCell.rect.height);
+        Vector2 tPivotOffsetPos = new Vector2(tPivotOffset.x * pCell.rect.width, tPivotOffset.y * pCell.rect.height);
 
-        Vector2 tTotalOffsetPos = new Vector2(tAnchorOffsetPos.x + tPivotOffsetPos.x,
-            tAnchorOffsetPos.y + tPivotOffsetPos.y);
+        Vector2 tTotalOffsetPos = new Vector2(tAnchorOffsetPos.x + tPivotOffsetPos.x, tAnchorOffsetPos.y + tPivotOffsetPos.y);
 
         return tTotalOffsetPos;
     }
 
+    #region 滑动补足功能
+
+    public bool mEnaleDragSupplement = false;       //是否开启滑动补足， 范围判断已ViewPort的可视区域为准
+    public float mDrageSupplementVelocity = 1;      //补足滑动时的速度调整参数
+    public int mDragSupplementIndex;
+
+    private Vector2 mBeginDragAnchorPos = new Vector2(-1f, -1f);
+    private float mBeginDragTime = 0f;
+
+    public enum SupplementType
+    {
+        None,     //不用补足
+        Floor,    //向下补足
+        Ceil,     //向上补足
+    }
+    /// <summary>
+    /// 尝试补足拖拽
+    /// </summary>
+    private void TrySupplementDrag(Vector2 pDragPosOffset, float pDragTimeOffset)
+    {
+        if (mEnaleDragSupplement == false)
+            return;
+
+        SupplementType tSupplementType = GetDragSupplementType(pDragPosOffset, pDragTimeOffset);
+        int tMaxDragSupplementIndex = mGridArrangeBase.GetMaxDragSupplementIndex();
+
+        int tDragSupplementIndex = mDragSupplementIndex;
+        switch (tSupplementType)
+        {
+            case SupplementType.Ceil:
+                tDragSupplementIndex = Mathf.Min(tMaxDragSupplementIndex, tDragSupplementIndex + 1);
+                break;
+
+            case SupplementType.Floor:
+                tDragSupplementIndex = Mathf.Max(0, tDragSupplementIndex - 1);
+                break;
+        }
+
+        mDragSupplementIndex = tDragSupplementIndex;
+
+        Vector2 tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(tDragSupplementIndex);
+        StartScrollToTargetPos(tTargetPos, mDrageSupplementVelocity);
+        Debug.LogError(string.Format("index = {0}  tTargetPos = {1}", tDragSupplementIndex, tTargetPos));
+    }
+
+    private SupplementType GetDragSupplementType(Vector2 pDragPosOffset, float pDragTimeOffset)
+    {
+        float tPosOffset = mScrollRect.vertical ? pDragPosOffset.y : pDragPosOffset.x;
+        float tAbsPosOffset = Mathf.Abs(tPosOffset);
+
+        float tViewSize = mScrollRect.vertical ? mViewPortRectTransform.rect.height : mViewPortRectTransform.rect.width;
+
+        //快速滑动的情况
+        if (pDragTimeOffset < 0.3f)
+        {
+            if (mScrollRect.vertical)
+            {
+                return pDragPosOffset.y > 0 ? SupplementType.Ceil : SupplementType.Floor;
+            }
+            else
+            {
+                return pDragPosOffset.x < 0 ? SupplementType.Ceil : SupplementType.Floor;
+            }
+        }
+
+        //滑动距离的判断
+        if(tAbsPosOffset < tViewSize / 2)
+            return SupplementType.None;
+
+        if (mScrollRect.vertical)
+        {
+            return tPosOffset > 0 ? SupplementType.Ceil : SupplementType.Floor;
+        }
+        else
+        {
+            return tPosOffset < 0 ? SupplementType.Ceil : SupplementType.Floor;
+        }
+    }
+
+    #endregion
+
+    #region 滑动至指定位置
+
+    private bool mStartScrollToTargetPos = false;
+    private Vector2 mScrollTargetPos;
+    private float mScrollStrength;
+
+    private void StartScrollToTargetPos(Vector2 pTargetPos, float pStrength)
+    {
+        mStartScrollToTargetPos = true;
+        mScrollTargetPos = pTargetPos;
+        mScrollStrength = pStrength;
+    }
+
+    private void EndScrollToTargetPos()
+    {
+        mStartScrollToTargetPos = false;
+    }
+
+    private void UpdateScrollToTarget()
+    {
+        Vector2 tCurPos = mRectTransform.anchoredPosition;
+
+        if (Vector2.Distance(tCurPos, mScrollTargetPos) < 0.01f)
+        {
+            EndScrollToTargetPos();
+            mRectTransform.anchoredPosition = mScrollTargetPos;
+
+            return;
+        }
+
+        mRectTransform.anchoredPosition = Vector2.Lerp(tCurPos, mScrollTargetPos, mScrollStrength);
+    }
+
+    #endregion
+
+
     #region Unity_Editor
 
 #if UNITY_EDITOR
-  
+
     public void InspectorInit()
     {
         if (mCellOffsetPos != Vector2.zero)
@@ -491,4 +659,6 @@ public class UGUIGridWrapContent : MonoBehaviour
         return tGo;
     }
     #endregion
+
+
 }
