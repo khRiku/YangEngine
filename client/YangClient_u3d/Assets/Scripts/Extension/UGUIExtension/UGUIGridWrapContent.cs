@@ -590,12 +590,14 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     /// <param name="pDataIndex"></param>
     /// <param name="pPostType">定位到可视区域的第几行, 1 为 第 1 行(列）， 2 为 第 2 行（列）, 特殊位置看 FixPosType </param>
-    public void FixToDataIndex(int pDataIndex, int pPosType = 1)
+    public void FixToDataIndex(int pDataIndex, float pVelocity = 1f, int pPosType = 1)
     {
         Vector2 tFixAnchorPos = mGridArrangeBase.GetFixAnchorPos(pDataIndex, pPosType);
-        mRectTransform.anchoredPosition = tFixAnchorPos;
+        StartScrollToTargetPos(tFixAnchorPos, pVelocity);
+        
+        //mRectTransform.anchoredPosition = tFixAnchorPos;
 
-        RefreshAllCellPos();
+        //RefreshAllCellPos();
     }
 
     // <summary>
