@@ -89,6 +89,12 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     private Vector3 mPosition = Vector3.zero;
     private bool mPosChange = false;
+    #endregion
+
+    #region 事件
+
+    /// 滑动到目标位置后的事件通知
+    public Action mScrollToTargetFinishAction { get; private set; } 
 
     #endregion
 
@@ -236,16 +242,13 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.LogError("OnBeginDrag");
-
+        EndScrollToTargetPos();
         mBeginDragAnchorPos = mRectTransform.anchoredPosition;
         mBeginDragTime = Time.unscaledTime;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.LogError("OnEndDrag");
-
         Vector2 tPosOffset = mRectTransform.anchoredPosition - mBeginDragAnchorPos;
         float tTimeOffset = Time.unscaledTime - mBeginDragTime;
 
@@ -402,9 +405,11 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     #region 滑动补足功能
 
-    public bool mEnaleDragSupplement = false;       //是否开启滑动补足， 范围判断已ViewPort的可视区域为准
-    public float mDrageSupplementVelocity = 1;      //补足滑动时的速度调整参数
-    public int mDragSupplementIndex;
+    public bool mEnalbDragSupplement = false;       //是否开启滑动补足， 范围判断已ViewPort的可视区域为准
+    public float mDragSupplementViewSizeScale = 0.7f;       //滑动补足范围缩放, 0f-1f, 缩放可视范围的
+    public float mDrageSupplementVelocity = 0.1f;      //补足滑动时的速度调整参数
+
+    public int mDragSupplementIndex { get; private set; }   //当前的滑动补足索引
 
     private Vector2 mBeginDragAnchorPos = new Vector2(-1f, -1f);
     private float mBeginDragTime = 0f;
@@ -420,7 +425,7 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     private void TrySupplementDrag(Vector2 pDragPosOffset, float pDragTimeOffset)
     {
-        if (mEnaleDragSupplement == false)
+        if (mEnalbDragSupplement == false)
             return;
 
         SupplementType tSupplementType = GetDragSupplementType(pDragPosOffset, pDragTimeOffset);
@@ -442,7 +447,7 @@ public class UGUIGridWrapContent : MonoBehaviour
 
         Vector2 tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(tDragSupplementIndex);
         StartScrollToTargetPos(tTargetPos, mDrageSupplementVelocity);
-        Debug.LogError(string.Format("index = {0}  tTargetPos = {1}", tDragSupplementIndex, tTargetPos));
+      //  Debug.LogError(string.Format("index = {0}  tTargetPos = {1}", tDragSupplementIndex, tTargetPos));
     }
 
     private SupplementType GetDragSupplementType(Vector2 pDragPosOffset, float pDragTimeOffset)
@@ -451,6 +456,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         float tAbsPosOffset = Mathf.Abs(tPosOffset);
 
         float tViewSize = mScrollRect.vertical ? mViewPortRectTransform.rect.height : mViewPortRectTransform.rect.width;
+        tViewSize *= mDragSupplementViewSizeScale;
 
         //快速滑动的情况
         if (pDragTimeOffset < 0.3f)
@@ -489,6 +495,9 @@ public class UGUIGridWrapContent : MonoBehaviour
 
     private void StartScrollToTargetPos(Vector2 pTargetPos, float pStrength)
     {
+        //拖动时， ScrollRect 会记录速度来修改来修改位置， 如果自己要播放滑动动画， 手动停止这速度
+        mScrollRect.StopMovement();
+
         mStartScrollToTargetPos = true;
         mScrollTargetPos = pTargetPos;
         mScrollStrength = pStrength;
@@ -503,15 +512,27 @@ public class UGUIGridWrapContent : MonoBehaviour
     {
         Vector2 tCurPos = mRectTransform.anchoredPosition;
 
-        if (Vector2.Distance(tCurPos, mScrollTargetPos) < 0.01f)
+        if (Vector2.Distance(tCurPos, mScrollTargetPos) < 0.1f)
         {
             EndScrollToTargetPos();
             mRectTransform.anchoredPosition = mScrollTargetPos;
 
+            mScrollToTargetFinishAction?.Invoke();
+
             return;
         }
 
-        mRectTransform.anchoredPosition = Vector2.Lerp(tCurPos, mScrollTargetPos, mScrollStrength);
+        Vector2 tLerpPos = Vector2.Lerp(tCurPos, mScrollTargetPos, mScrollStrength);
+
+        //Debug.LogError(string.Format("CurPos = {0}  mScrollTargetPos = {1}  tLerpPos = {2}",
+        //    mRectTransform.anchoredPosition,
+        //    mScrollTargetPos,
+        //    tLerpPos
+        //));
+
+        mRectTransform.anchoredPosition = tLerpPos;
+
+
     }
 
     #endregion
@@ -539,7 +560,8 @@ public class UGUIGridWrapContent : MonoBehaviour
             mConfig.mDataCnt = 30;
         }
 
-        mGridArrangeBase = GetGridArrangeInstance();
+        if (Application.isPlaying == false)
+            mGridArrangeBase = GetGridArrangeInstance();
 
         for (int i = 0; i < this.transform.childCount; ++i)
         {

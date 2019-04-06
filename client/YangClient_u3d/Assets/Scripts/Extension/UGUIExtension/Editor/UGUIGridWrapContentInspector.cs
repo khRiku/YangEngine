@@ -18,8 +18,12 @@ public class UGUIGridWrapContentInspector : Editor
         tGridWrapContent.mCellWidth = EditorGUILayout.IntField("Cell Width", tGridWrapContent.mCellWidth);
         tGridWrapContent.mCellHeight = EditorGUILayout.IntField("Cell Height", tGridWrapContent.mCellHeight);
 
+        GUI.enabled = Application.isPlaying ? false : true;
+        {
+            tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType)EditorGUILayout.EnumPopup("排列方式(ArrangeType)", tGridWrapContent.mArrangeType);
+        }
+        GUI.enabled = true;
 
-        tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType)EditorGUILayout.EnumPopup("排列方式(ArrangeType)", tGridWrapContent.mArrangeType);
         if (tGridWrapContent.mArrangeType == UGUIGridWrapContent.ArrangeType.Horizontal)
         {
             GUILayout.Label("已将 ScrooRect 调整为 上下滑动");
@@ -49,22 +53,20 @@ public class UGUIGridWrapContentInspector : Editor
 
                 break;
         }
+
         tGridWrapContent.mVerticalCnt = tGridWrapContent.mVerticalCnt < 0 ? 0: tGridWrapContent.mVerticalCnt;
         tGridWrapContent.mHorizontalCnt = tGridWrapContent.mHorizontalCnt < 0 ? 0 : tGridWrapContent.mHorizontalCnt;
-
-        //tGridWrapContent.mDragStepSize = EditorGUILayout.IntField("Drag Step Size", tGridWrapContent.mDragStepSize);
-        //if (tGridWrapContent.mDragStepSize < 0)
-        //    tGridWrapContent.mDragStepSize = 0;
 
         GUILayout.Space(8f);
 
         tGridWrapContent.mOffsetX = EditorGUILayout.IntField("X Offset", tGridWrapContent.mOffsetX);
         tGridWrapContent.mOffsetY = EditorGUILayout.IntField("Y Offset", tGridWrapContent.mOffsetY);
 
-        tGridWrapContent.mEnaleDragSupplement = EditorGUILayout.Toggle("开启滑动补足", tGridWrapContent.mEnaleDragSupplement);
-        if (tGridWrapContent.mEnaleDragSupplement)
+        tGridWrapContent.mEnalbDragSupplement = EditorGUILayout.Toggle("开启滑动补足", tGridWrapContent.mEnalbDragSupplement);
+        if (tGridWrapContent.mEnalbDragSupplement)
         {
             tGridWrapContent.mDrageSupplementVelocity = EditorGUILayout.Slider("滑动补足速度", tGridWrapContent.mDrageSupplementVelocity,0f, 1f);
+            tGridWrapContent.mDragSupplementViewSizeScale = EditorGUILayout.Slider("滑动可视范围缩放", tGridWrapContent.mDragSupplementViewSizeScale,0f, 1f);
         }
 
         if (GUI.changed == true)

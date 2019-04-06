@@ -121,7 +121,8 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 
     public override int GetMaxDragSupplementIndex()
     {
-        int tMaxIndex = Mathf.CeilToInt(mGridWrapContent.mRectTransform.rect.height / mGridWrapContent.mViewPortRectTransform.rect.height);
+        int tCount = Mathf.CeilToInt(mGridWrapContent.mRectTransform.rect.height / mGridWrapContent.mViewPortRectTransform.rect.height);
+        int tMaxIndex = tCount - 1;
 
         return tMaxIndex;
     }
