@@ -58,4 +58,7 @@ public abstract class UGUIGridArrangeBase
     /// 获取索引对应的位置
     /// </summary>
     public abstract Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex);
+
+    //将定位的位置调整为滑动补足的位置
+    public abstract int GetDragSupplementIndexByFixPos(Vector2 pFixAnchorPos);
 }

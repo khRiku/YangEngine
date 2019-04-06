@@ -124,6 +124,15 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         return tMaxIndex;
     }
 
+    public override int GetDragSupplementIndexByFixPos(Vector2 pFixAnchorPos)
+    {
+        float tAbsX = Mathf.Abs(pFixAnchorPos.x);
+
+        int tIndex = Mathf.FloorToInt(tAbsX / mGridWrapContent.mViewWidth);
+
+        return tIndex;
+    }
+
     public override Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex)
     {
         float tXPos = -pDragSuppleMentIndex * mGridWrapContent.mViewPortRectTransform.rect.width;

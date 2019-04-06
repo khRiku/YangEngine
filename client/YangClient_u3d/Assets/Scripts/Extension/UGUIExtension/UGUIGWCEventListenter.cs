@@ -19,7 +19,7 @@ public class UGUIGWCEventListenter : MonoBehaviour , IBeginDragHandler, IDragHan
     public UnityEvent<PointerEventData> mOnEndDrag { get; private set; }
     public UnityEvent<PointerEventData> mOnDrag { get; private set; }
 
-    private void Awake()
+    public void SetUp()
     {
         mOnBeginDrag = new UnityEvent<PointerEventData>();
         mOnEndDrag = new UnityEvent<PointerEventData>();

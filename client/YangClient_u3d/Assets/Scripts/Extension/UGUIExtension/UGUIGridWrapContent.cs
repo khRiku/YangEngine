@@ -76,7 +76,16 @@ public class UGUIGridWrapContent : MonoBehaviour
     //事件监听
     public UGUIGWCEventListenter mUGUIGWCEventListenter { get; private set; }
 
-    public Vector2 mViewSize;              //可视区域的 长宽
+    public float mViewWidth
+    {
+        get { return mViewPortRectTransform.rect.width; }
+    }
+
+
+    public float mViewHeight
+    {
+        get { return mViewPortRectTransform.rect.height; }
+    }
 
     private List<GameObject> mCellList = new List<GameObject>();   //实例化的cell 缓存
 
@@ -229,8 +238,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         if (mUGUIGWCEventListenter == null)
             mUGUIGWCEventListenter = mScrollRect.gameObject.AddComponent<UGUIGWCEventListenter>();
 
-        //缓存数据
-        mViewSize = new Vector2(mViewPortRectTransform.rect.width, mViewPortRectTransform.rect.height);
+        mUGUIGWCEventListenter.SetUp();
     }
 
     #region 事件注册和响应
@@ -593,11 +601,17 @@ public class UGUIGridWrapContent : MonoBehaviour
     public void FixToDataIndex(int pDataIndex, float pVelocity = 1f, int pPosType = 1)
     {
         Vector2 tFixAnchorPos = mGridArrangeBase.GetFixAnchorPos(pDataIndex, pPosType);
-        StartScrollToTargetPos(tFixAnchorPos, pVelocity);
-        
-        //mRectTransform.anchoredPosition = tFixAnchorPos;
 
-        //RefreshAllCellPos();
+        Vector2 tTargetPos = tFixAnchorPos;
+
+        //开启了滑动补足， 那定位的位置需转换为滑动补足的位置
+        if (mEnalbDragSupplement)
+        {
+            mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByFixPos(tFixAnchorPos);
+            tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(mDragSupplementIndex);
+        }
+
+        StartScrollToTargetPos(tTargetPos, pVelocity);    
     }
 
     // <summary>
