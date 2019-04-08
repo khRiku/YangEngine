@@ -124,7 +124,7 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         return tMaxIndex;
     }
 
-    public override int GetDragSupplementIndexByFixPos(Vector2 pFixAnchorPos)
+    public override int GetDragSupplementIndexByPos(Vector2 pFixAnchorPos)
     {
         float tAbsX = Mathf.Abs(pFixAnchorPos.x);
 

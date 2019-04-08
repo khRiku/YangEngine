@@ -157,7 +157,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
         return new Vector2(tTargetXPos, 0f);
     }
 
-    public override int GetDragSupplementIndexByFixPos(Vector2 pFixAnchorPos)
+    public override int GetDragSupplementIndexByPos(Vector2 pFixAnchorPos)
     {
         float tAbsX = Mathf.Abs(pFixAnchorPos.x);
 

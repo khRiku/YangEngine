@@ -412,8 +412,28 @@ public class UGUIGridWrapContent : MonoBehaviour
     }
 
     #region 滑动补足功能
+    //是否开启滑动补足， 范围判断已ViewPort的可视区域为准
+    private bool mOriginEnalbDragSupplement = false;
 
-    public bool mEnalbDragSupplement = false;       //是否开启滑动补足， 范围判断已ViewPort的可视区域为准
+    public bool mEnalbDragSupplement
+    {
+        get { return mOriginEnalbDragSupplement; }
+        set
+        {
+            mOriginEnalbDragSupplement = value;
+            if (mOriginEnalbDragSupplement)
+            {
+                //判断是使用当前位置，还是滑动到目标的位置
+                Vector2 tAnchorPos = mStartScrollToTargetPos ? mScrollTargetPos : mRectTransform.anchoredPosition;
+                if (mStartScrollToTargetPos == false)
+                    mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByPos(tAnchorPos);
+
+                Debug.LogError("启用滑动补足后 mDragSupplementIndex = " + mDragSupplementIndex);
+
+            }
+        }
+    }
+
     public float mDragSupplementViewSizeScale = 0.7f;       //滑动补足范围缩放, 0f-1f, 缩放可视范围的
     public float mDrageSupplementVelocity = 0.1f;      //补足滑动时的速度调整参数
 
@@ -452,8 +472,9 @@ public class UGUIGridWrapContent : MonoBehaviour
         }
 
         mDragSupplementIndex = tDragSupplementIndex;
+        Debug.LogError("计算出新的 mDragSupplementIndex = " + mDragSupplementIndex);
 
-        Vector2 tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(tDragSupplementIndex);
+        Vector2 tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(mDragSupplementIndex);
         StartScrollToTargetPos(tTargetPos, mDrageSupplementVelocity);
       //  Debug.LogError(string.Format("index = {0}  tTargetPos = {1}", tDragSupplementIndex, tTargetPos));
     }
@@ -493,6 +514,8 @@ public class UGUIGridWrapContent : MonoBehaviour
         }
     }
 
+
+
     #endregion
 
     #region 滑动至指定位置
@@ -520,13 +543,13 @@ public class UGUIGridWrapContent : MonoBehaviour
     {
         Vector2 tCurPos = mRectTransform.anchoredPosition;
 
-        if (Vector2.Distance(tCurPos, mScrollTargetPos) < 0.1f)
+        if (Vector2.Distance(tCurPos, mScrollTargetPos) < 1f)
         {
             EndScrollToTargetPos();
             mRectTransform.anchoredPosition = mScrollTargetPos;
 
             mScrollToTargetFinishAction?.Invoke();
-
+            Debug.LogError("mDragSupplementIndex = " + mDragSupplementIndex);
             return;
         }
 
@@ -607,7 +630,7 @@ public class UGUIGridWrapContent : MonoBehaviour
         //开启了滑动补足， 那定位的位置需转换为滑动补足的位置
         if (mEnalbDragSupplement)
         {
-            mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByFixPos(tFixAnchorPos);
+            mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByPos(tFixAnchorPos);
             tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(mDragSupplementIndex);
         }
 
