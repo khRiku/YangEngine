@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ´Ó×óµ½ÓÒÅÅĞò£¬ µ½ÁËÏŞ¶¨µÄÃ¿ĞĞÊıÄ¿¾Í¹ıĞĞ
-/// ÓÃÓÚ ScrollRect ÎªÉÏÏÂ »¬¶¯µÄÇé¿ö 
+/// ä»å·¦åˆ°å³æ’åºï¼Œ åˆ°äº†é™å®šçš„æ¯è¡Œæ•°ç›®å°±è¿‡è¡Œ
+/// ç”¨äº ScrollRect ä¸ºä¸Šä¸‹ æ»‘åŠ¨çš„æƒ…å†µ 
 /// </summary>
 public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 {
@@ -104,8 +104,9 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
 
         float tMaxYPos = GetMaxYPos();
         float tMinPos = Mathf.Min(tMaxYPos, tYPos);
+        float tTarPos = Mathf.Max(0f, tMinPos);
 
-        return new Vector2(0, tMinPos);
+        return new Vector2(0, tTarPos);
     }
 
     public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
@@ -146,10 +147,10 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
         return tIndex;
     }
 
-    #region ¸¨Öúº¯Êı
+    #region è¾…åŠ©å‡½æ•°
 
     /// <summary>
-    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
+    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å– y ä½ç½®çš„ç´¢å¼•
     /// </summary>
     private int GetYindexByDataIndex(int pDataIndex)
     {
@@ -159,7 +160,7 @@ public class UGUIGridArrangeHorizontal : UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// »ñÈ¡¿ÉÉèÖÃµÄ×îĞ¡ x Öµ
+    /// è·å–å¯è®¾ç½®çš„æœ€å° x å€¼
     /// </summary>
     /// <returns></returns>
     public float GetMaxYPos()

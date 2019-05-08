@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,54 +7,62 @@ using UnityEngine;
 public class UGUIGridWrapContentInspector : Editor
 {
     public override void OnInspectorGUI()
-    {       
+    {
         UGUIGridWrapContent tGridWrapContent = target as UGUIGridWrapContent;
         tGridWrapContent.InspectorInit();
 
         GUILayout.Space(10f);
 
-        EditorGUILayout.HelpBox("¸Ã×é¼ş¶ÔCellµÄÅÅĞòÊÇ´Ó CellµÄ¸¸½Úµã µÄ×óÉÏ½Ç¿ªÊ¼µÄ, ÈôÒªµ÷ÕûÎ»ÖÃÇëÒÆ¶¯¹ÒÔØÁË ScrollRect µÄ GameObject", MessageType.Info);
+        EditorGUILayout.HelpBox("è¯¥ç»„ä»¶å¯¹Cellçš„æ’åºæ˜¯ä» Cellçš„çˆ¶èŠ‚ç‚¹ çš„å·¦ä¸Šè§’å¼€å§‹çš„, è‹¥è¦è°ƒæ•´ä½ç½®è¯·ç§»åŠ¨æŒ‚è½½äº† ScrollRect çš„ GameObject", MessageType.Info);
 
         tGridWrapContent.mCellWidth = EditorGUILayout.IntField("Cell Width", tGridWrapContent.mCellWidth);
         tGridWrapContent.mCellHeight = EditorGUILayout.IntField("Cell Height", tGridWrapContent.mCellHeight);
 
         GUI.enabled = Application.isPlaying ? false : true;
         {
-            tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType)EditorGUILayout.EnumPopup("ÅÅÁĞ·½Ê½(ArrangeType)", tGridWrapContent.mArrangeType);
+            tGridWrapContent.mArrangeType = (UGUIGridWrapContent.ArrangeType) EditorGUILayout.EnumPopup("æ’åˆ—æ–¹å¼(ArrangeType)", tGridWrapContent.mArrangeType);
         }
         GUI.enabled = true;
 
         if (tGridWrapContent.mArrangeType == UGUIGridWrapContent.ArrangeType.Horizontal)
         {
-            GUILayout.Label("ÒÑ½« ScrooRect µ÷ÕûÎª ÉÏÏÂ»¬¶¯");
-            tGridWrapContent.mScrollRect.vertical = true;
-            tGridWrapContent.mScrollRect.horizontal = false;
+            GUILayout.Label("å·²å°† ScrooRect è°ƒæ•´ä¸º ä¸Šä¸‹æ»‘åŠ¨");
+            if (Application.isPlaying == false)
+            {
+                tGridWrapContent.mScrollRect.vertical = true;
+                tGridWrapContent.mScrollRect.horizontal = false;
+            }
         }
         else
         {
-            GUILayout.Label("ÒÑ½« ScrooRect µ÷ÕûÎª ×óÓÒ»¬¶¯");
-            tGridWrapContent.mScrollRect.vertical = false;
-            tGridWrapContent.mScrollRect.horizontal = true;
+            GUILayout.Label("å·²å°† ScrooRect è°ƒæ•´ä¸º å·¦å³æ»‘åŠ¨");
+            if (Application.isPlaying == false)
+            {
+                tGridWrapContent.mScrollRect.vertical = false;
+                tGridWrapContent.mScrollRect.horizontal = true;
+            }
+
         }
+
 
         switch (tGridWrapContent.mArrangeType)
         {
             case UGUIGridWrapContent.ArrangeType.Vertical:
-                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "Ë®Æ½·½Ïò£¬Ã¿ĞĞÓĞ¼¸¸ö"), tGridWrapContent.mVerticalCnt);
+                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "æ°´å¹³æ–¹å‘ï¼Œæ¯è¡Œæœ‰å‡ ä¸ª"), tGridWrapContent.mVerticalCnt);
                 break;
 
             case UGUIGridWrapContent.ArrangeType.Horizontal:
-                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "´¹Ö±·½Ïò£¬Ã¿ÁĞÓĞ¼¸¸ö"), tGridWrapContent.mHorizontalCnt);
+                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "å‚ç›´æ–¹å‘ï¼Œæ¯åˆ—æœ‰å‡ ä¸ª"), tGridWrapContent.mHorizontalCnt);
                 break;
 
             case UGUIGridWrapContent.ArrangeType.HorizontalPage:
-                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "Ë®Æ½·½Ïò£¬Ã¿ĞĞÓĞ¼¸¸ö"), tGridWrapContent.mVerticalCnt);
-                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "´¹Ö±·½Ïò£¬Ã¿ÁĞÓĞ¼¸¸ö"), tGridWrapContent.mHorizontalCnt);
+                tGridWrapContent.mVerticalCnt = EditorGUILayout.IntField(new GUIContent("Vertical Count", "æ°´å¹³æ–¹å‘ï¼Œæ¯è¡Œæœ‰å‡ ä¸ª"), tGridWrapContent.mVerticalCnt);
+                tGridWrapContent.mHorizontalCnt = EditorGUILayout.IntField(new GUIContent("Horizontal Count", "å‚ç›´æ–¹å‘ï¼Œæ¯åˆ—æœ‰å‡ ä¸ª"), tGridWrapContent.mHorizontalCnt);
 
                 break;
         }
 
-        tGridWrapContent.mVerticalCnt = tGridWrapContent.mVerticalCnt < 0 ? 0: tGridWrapContent.mVerticalCnt;
+        tGridWrapContent.mVerticalCnt = tGridWrapContent.mVerticalCnt < 0 ? 0 : tGridWrapContent.mVerticalCnt;
         tGridWrapContent.mHorizontalCnt = tGridWrapContent.mHorizontalCnt < 0 ? 0 : tGridWrapContent.mHorizontalCnt;
 
         GUILayout.Space(8f);
@@ -62,11 +70,11 @@ public class UGUIGridWrapContentInspector : Editor
         tGridWrapContent.mOffsetX = EditorGUILayout.IntField("X Offset", tGridWrapContent.mOffsetX);
         tGridWrapContent.mOffsetY = EditorGUILayout.IntField("Y Offset", tGridWrapContent.mOffsetY);
 
-        tGridWrapContent.mEnalbDragSupplement = EditorGUILayout.Toggle("¿ªÆô»¬¶¯²¹×ã", tGridWrapContent.mEnalbDragSupplement);
+        tGridWrapContent.mEnalbDragSupplement = EditorGUILayout.Toggle("å¼€å¯æ»‘åŠ¨è¡¥è¶³", tGridWrapContent.mEnalbDragSupplement);
         if (tGridWrapContent.mEnalbDragSupplement)
         {
-            tGridWrapContent.mDrageSupplementVelocity = EditorGUILayout.Slider("»¬¶¯²¹×ãËÙ¶È", tGridWrapContent.mDrageSupplementVelocity,0f, 1f);
-            tGridWrapContent.mDragSupplementViewSizeScale = EditorGUILayout.Slider("»¬¶¯¿ÉÊÓ·¶Î§Ëõ·Å", tGridWrapContent.mDragSupplementViewSizeScale,0f, 1f);
+            tGridWrapContent.mDrageSupplementVelocity = EditorGUILayout.Slider("æ»‘åŠ¨è¡¥è¶³é€Ÿåº¦", tGridWrapContent.mDrageSupplementVelocity, 0f, 1f);
+            tGridWrapContent.mDragSupplementViewSizeScale = EditorGUILayout.Slider("æ»‘åŠ¨å¯è§†èŒƒå›´ç¼©æ”¾", tGridWrapContent.mDragSupplementViewSizeScale, 0f, 1f);
         }
 
         if (GUI.changed == true)
@@ -77,7 +85,7 @@ public class UGUIGridWrapContentInspector : Editor
             tGridWrapContent.RepositionCellInEditor();
         }
 
-        if (GUILayout.Button("ÖØĞÂÅÅĞò"))
+        if (GUILayout.Button("é‡æ–°æ’åº"))
             tGridWrapContent.RepositionCellInEditor();
     }
 }

@@ -1,10 +1,10 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class UGUIGridArrangeBase
 {
-    public static int mExtraLine = 2;  //ÔÚ¿ÉÊÓÇøÓòËã³öµÄĞĞ»òÁĞµÄ»ù´¡ÉÏÔÙÀ©Õ¹µÄĞĞ»òÁĞÊı
+    public static int mExtraLine = 2;  //åœ¨å¯è§†åŒºåŸŸç®—å‡ºçš„è¡Œæˆ–åˆ—çš„åŸºç¡€ä¸Šå†æ‰©å±•çš„è¡Œæˆ–åˆ—æ•°
 
     public UGUIGridWrapContent mGridWrapContent;
 
@@ -14,51 +14,51 @@ public abstract class UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// µ÷ÕûÄÚÈİÇøÓò³¤¿í
+    /// è°ƒæ•´å†…å®¹åŒºåŸŸé•¿å®½
     /// </summary>
     public abstract void AdjustContentSize();
 
     /// <summary>
-    /// ¸ù¾İ¿ÉÊÓÇøÓòµÄ´óĞ¡£¬ ¼ÆËã³ö´óĞ¡
+    /// æ ¹æ®å¯è§†åŒºåŸŸçš„å¤§å°ï¼Œ è®¡ç®—å‡ºå¤§å°
     /// </summary>
     public abstract int GetCellsCountByViewSize();
 
 
     /// <summary>
-    /// ¸ù¾İÊı¾İµÄË÷Òı£¬ Ëã³öÎ»ÖÃ
+    /// æ ¹æ®æ•°æ®çš„ç´¢å¼•ï¼Œ ç®—å‡ºä½ç½®
     /// </summary>
     public abstract Vector2 GetAnchorPosByDataIndex(int pDataIndex);
 
     /// <summary>
-    /// ¸ù¾İ Content µÄÎ»ÖÃÆ«ÒÆ£¬ »ñÈ¡ĞÂµÄ ÆğÊ¼Êı¾İË÷Òı
+    /// æ ¹æ® Content çš„ä½ç½®åç§»ï¼Œ è·å–æ–°çš„ èµ·å§‹æ•°æ®ç´¢å¼•
     /// </summary>
     public abstract int GetNewStartDataIndex();
 
     /// <summary>
-    /// ¸ù¾İ Content µÄÎ»ÖÃÆ«ÒÆ£¬ »ñÈ¡ĞÂµÄÊı¾İË÷ÒıÁĞ±í
+    /// æ ¹æ® Content çš„ä½ç½®åç§»ï¼Œ è·å–æ–°çš„æ•°æ®ç´¢å¼•åˆ—è¡¨
     /// </summary>
     public abstract List<int> GetNewDataIndexList();
 
     /// <summary>
-    /// »ñÈ¡ Content µÄÎ»ÖÃ£¨¶¨Î»µ½Ö¸¶¨µÄdataIndex£©
+    /// è·å– Content çš„ä½ç½®ï¼ˆå®šä½åˆ°æŒ‡å®šçš„dataIndexï¼‰
     /// </summary>
     public abstract Vector2 GetFixAnchorPos(int pDataIndex, int pPosType);
 
     /// <summary>
-    /// µ÷Õû×ø±êÎ»ÖÃ, È·±£Î»ÖÃ²»³¬³öºÏÀíÖµ
+    /// è°ƒæ•´åæ ‡ä½ç½®, ç¡®ä¿ä½ç½®ä¸è¶…å‡ºåˆç†å€¼
     /// </summary>
     public abstract Vector2 AdjustAnchorPos(Vector2 pAnchorPos);
 
     /// <summary>
-    /// »ñÈ¡¿É»¬¶¯µÄ×î´ó»¬¶¯²¹×ãË÷Òı
+    /// è·å–å¯æ»‘åŠ¨çš„æœ€å¤§æ»‘åŠ¨è¡¥è¶³ç´¢å¼•
     /// </summary>
     public abstract int GetMaxDragSupplementIndex();
 
     /// <summary>
-    /// »ñÈ¡Ë÷Òı¶ÔÓ¦µÄÎ»ÖÃ
+    /// è·å–ç´¢å¼•å¯¹åº”çš„ä½ç½®
     /// </summary>
     public abstract Vector2 GetDragSupplemnetAnchorPos(int pDragSuppleMentIndex);
 
-    //½«¶¨Î»µÄÎ»ÖÃµ÷ÕûÎª»¬¶¯²¹×ãµÄÎ»ÖÃ
+    //å°†å®šä½çš„ä½ç½®è°ƒæ•´ä¸ºæ»‘åŠ¨è¡¥è¶³çš„ä½ç½®
     public abstract int GetDragSupplementIndexByPos(Vector2 pFixAnchorPos);
 }

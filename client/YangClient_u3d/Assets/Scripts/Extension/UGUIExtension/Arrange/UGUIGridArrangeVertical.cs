@@ -1,9 +1,9 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ´ÓÉÏµ½ÏÂµÄÅÅÁĞ£¬ ÊÊÓÃÓÚ×óÓÒ¹ö¶¯µÄÇé¿ö
+/// ä»ä¸Šåˆ°ä¸‹çš„æ’åˆ—ï¼Œ é€‚ç”¨äºå·¦å³æ»šåŠ¨çš„æƒ…å†µ
 /// </summary>
 public class UGUIGridArrangeVertical : UGUIGridArrangeBase
 {
@@ -101,8 +101,9 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
 
         float tMinXPos = GetMinXPos();
         float tMaxPos = Mathf.Max(tMinXPos, tXPos);
+        float tTarPos = Mathf.Min(0, tMaxPos);
 
-        return new Vector2(tMaxPos, 0);
+        return new Vector2(tTarPos, 0);
     }
 
     public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
@@ -143,10 +144,10 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
         return new Vector2(tTargetXPos, 0f);
     }
 
-    #region ¸¨Öúº¯Êı
+    #region è¾…åŠ©å‡½æ•°
 
     /// <summary>
-    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
+    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å– y ä½ç½®çš„ç´¢å¼•
     /// </summary>
     private int GetXIndexByDataIndex(int pDataIndex)
     {
@@ -156,7 +157,7 @@ public class UGUIGridArrangeVertical : UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// »ñÈ¡¿ÉÉèÖÃµÄ×îĞ¡ x Öµ
+    /// è·å–å¯è®¾ç½®çš„æœ€å° x å€¼
     /// </summary>
     /// <returns></returns>
     public float GetMinXPos()

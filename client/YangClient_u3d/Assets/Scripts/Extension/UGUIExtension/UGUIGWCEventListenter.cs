@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// ÊÂ¼ş¼àÌıÀà
+/// äº‹ä»¶ç›‘å¬ç±»
 /// </summary>
 public class UGUIGWCEventListenter : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHandler
 {

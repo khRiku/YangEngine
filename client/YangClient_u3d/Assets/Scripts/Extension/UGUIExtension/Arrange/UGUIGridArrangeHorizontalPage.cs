@@ -1,13 +1,13 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//×óÓÒÅÅÁĞ£¬ Ò³µÄĞÎÊ½£¬ ¸úÊÖ»úµÄÒ»Ñù£¬ ÊÊÓÃÓÚ×óÓÒ¹ö¶¯µÄÇé¿ö
+//å·¦å³æ’åˆ—ï¼Œ é¡µçš„å½¢å¼ï¼Œ è·Ÿæ‰‹æœºçš„ä¸€æ ·ï¼Œ é€‚ç”¨äºå·¦å³æ»šåŠ¨çš„æƒ…å†µ
 public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 {
-    public int mPageCellCount { get; private set; }      //Ã¿Ò³ÓĞ¶àÉÙ¸öcell
-    public int mPageCount;              //ÓĞ¶àÉÙÒ³
-    public Vector2 mPageSize;           //Ã¿Ò»Ò³µÄ³¤¿í
+    public int mPageCellCount { get; private set; }      //æ¯é¡µæœ‰å¤šå°‘ä¸ªcell
+    public int mPageCount;              //æœ‰å¤šå°‘é¡µ
+    public Vector2 mPageSize;           //æ¯ä¸€é¡µçš„é•¿å®½
 
 
     public UGUIGridArrangeHorizontalPage(UGUIGridWrapContent pGridWrapContent) : base(pGridWrapContent)
@@ -40,9 +40,9 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
     public override Vector2 GetAnchorPosByDataIndex(int pDataIndex)
     {
-        int tPageIndex = Mathf.CeilToInt(pDataIndex / mPageCellCount);       //Ò³Ë÷Òı
-        int tLastPageXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;  //ÒÔ×îºóÒ»Ò³Îª»ù×¼µÄ X Ë÷Òı
-        int tLastPageYIndex = Mathf.CeilToInt((pDataIndex - tPageIndex * mPageCellCount)/mGridWrapContent.mHorizontalCnt);       //ÒÔ×îºóÒ»Ò³Îª»ù×¼µÄ Y Ë÷Òı
+        int tPageIndex = Mathf.CeilToInt(pDataIndex / mPageCellCount);       //é¡µç´¢å¼•
+        int tLastPageXIndex = pDataIndex % mGridWrapContent.mHorizontalCnt;  //ä»¥æœ€åä¸€é¡µä¸ºåŸºå‡†çš„ X ç´¢å¼•
+        int tLastPageYIndex = Mathf.CeilToInt((pDataIndex - tPageIndex * mPageCellCount)/mGridWrapContent.mHorizontalCnt);       //ä»¥æœ€åä¸€é¡µä¸ºåŸºå‡†çš„ Y ç´¢å¼•
 
         float tXPos = tPageIndex * mPageSize.x + tLastPageXIndex * mGridWrapContent.mCellWidth;
         float tYPos = -tLastPageYIndex * mGridWrapContent.mCellHeight;
@@ -75,7 +75,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
         int tStartDataIndex = GetNewStartDataIndex();
         Vector2 tStartAnchorPos = GetAnchorPosByDataIndex(tStartDataIndex);
-     //   Debug.LogError("ÆğÊ¼index = " + tStartDataIndex);
+     //   Debug.LogError("èµ·å§‹index = " + tStartDataIndex);
         int tCellCount = GetCellsCountByViewSize();
         List<int> tNewDataIndexList = new List<int>();
         for (int i = 0; i < tCellCount; ++i)
@@ -91,10 +91,10 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
             if (tNewDataIndex >= tDataCount)
             {
-           //     Debug.LogError("³¬¹ıµÄ dataindex = " + tNewDataIndex);
+           //     Debug.LogError("è¶…è¿‡çš„ dataindex = " + tNewDataIndex);
                 continue;
             }
-         //   Debug.LogError("i = " + i + "ĞÂµÄ dataindex = " + tNewDataIndex + "   tAnchorPos = " + tAnchorPos);
+         //   Debug.LogError("i = " + i + "æ–°çš„ dataindex = " + tNewDataIndex + "   tAnchorPos = " + tAnchorPos);
 
             tNewDataIndexList.Add(tNewDataIndex);
         }
@@ -124,8 +124,9 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
 
         float tMinXPos = GetMinXPos();
         float tMaxPos = Mathf.Max(tMinXPos, tXPos);
+        float tTarPos = Mathf.Min(0, tMaxPos);
 
-        return new Vector2(tMaxPos, 0);
+        return new Vector2(tTarPos, 0);
     }
 
     public override Vector2 AdjustAnchorPos(Vector2 pAnchorPos)
@@ -166,9 +167,9 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
         return tIndex;
     }
 
-    #region ¸¨Öúº¯Êı
+    #region è¾…åŠ©å‡½æ•°
     /// <summary>
-    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡×ø±êÎ»ÖÃ
+    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å–åæ ‡ä½ç½®
     /// </summary>
     public int GetDataIndexByPos(Vector2 pAnchorPos)
     {
@@ -182,7 +183,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// ¸ù¾İÊı¾İË÷Òı»ñÈ¡ y Î»ÖÃµÄË÷Òı
+    /// æ ¹æ®æ•°æ®ç´¢å¼•è·å– y ä½ç½®çš„ç´¢å¼•
     /// </summary>
     private int GetXIndexByDataIndex(int pDataIndex)
     {
@@ -193,7 +194,7 @@ public class UGUIGridArrangeHorizontalPage : UGUIGridArrangeBase
     }
 
     /// <summary>
-    /// »ñÈ¡¿ÉÉèÖÃµÄ×îĞ¡ x Öµ
+    /// è·å–å¯è®¾ç½®çš„æœ€å° x å€¼
     /// </summary>
     /// <returns></returns>
     public float GetMinXPos()
