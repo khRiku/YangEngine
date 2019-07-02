@@ -221,10 +221,13 @@ public class UIScriptCreatorManager
 
             string[] tDotSplitStrArr = tLineStr.Split(',');
 
-            string tPattern = "\".*?\"";
-            MatchCollection tCollection = Regex.Matches(tLineStr, tPattern);
-            string tPathStr = tCollection[0].Value.Replace("\"", "");
-            string tTypeName = tCollection[1].Value.Replace("\"", "");
+            string tPattern = "tElementDic.Add\\(new KeyValuePair<string, string>\\(\"([\\s\\S]+)\",\"([\\s\\S]+)\"\\)\\);";
+
+            Match tMatch = Regex.Match(tLineStr, tPattern);
+            string tPathStr = tMatch.Groups[1].Value;
+            string tTypeName = tMatch.Groups[2].Value;
+
+
 
             int tGoNameStartIndex = tPathStr.LastIndexOf("/") + 1;
             string tGoName = tPathStr.Substring(tGoNameStartIndex);

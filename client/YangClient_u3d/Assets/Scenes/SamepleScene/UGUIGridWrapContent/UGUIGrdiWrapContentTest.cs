@@ -1,5 +1,4 @@
-﻿
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using System.IO;
 using JetBrains.Annotations;
@@ -46,9 +45,11 @@ class UGUIGrdiWrapContentTest : MonoBehaviour
 
     public int mFixTo = 1;
     public int mPosType;
+    public float mFixVelocity = 1f;
+
     [ContextMenu("定位")]
     private void FixTo()
     {
-        mGridWrapContent.FixToDataIndex(mFixTo, mPosType);
+        mGridWrapContent.FixToDataIndex(mFixTo, mFixVelocity, mPosType);
     }
 }
