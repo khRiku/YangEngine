@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-
-public class 1 CanvasView
+using UnityEngine.UI;
+public class CanvasView
 {
     public GameObject mRootGo { get; private set; }
     public Transform mRootTransform { get; private set; }
@@ -21,6 +21,8 @@ public class 1 CanvasView
         BindElement();
     }
 
+    GameObject  Text_GameObject;
+    RectTransform  Text_RectTransform;
     CanvasRenderer  Text_CanvasRenderer;
     Text  Text_Text;
 
@@ -30,6 +32,8 @@ public class 1 CanvasView
     /// </summary>
     private void BindElement()
     {
+        Text_GameObject = mRootTransform.Find("Text").gameObject;
+        Text_RectTransform = mRootTransform.Find("Text").GetComponent<RectTransform>();
         Text_CanvasRenderer = mRootTransform.Find("Text").GetComponent<CanvasRenderer>();
         Text_Text = mRootTransform.Find("Text").GetComponent<Text>();
 
@@ -42,13 +46,15 @@ public class 1 CanvasView
     private void CheckNull()
     {
         //key: path, value; tyep name
-        Dictionary<string, string> tElementDic = new Dictionary<string, string>()
+        List<KeyValuePair<string, string>> tElementDic = new List<KeyValuePair<string, string>>();
         {//CheckNullElementStartTag
 
-             {"Text","CanvasRenderer"},
-             {"Text","Text"},
+             tElementDic.Add(new KeyValuePair<string, string>("Text","GameObject"));
+             tElementDic.Add(new KeyValuePair<string, string>("Text","RectTransform"));
+             tElementDic.Add(new KeyValuePair<string, string>("Text","CanvasRenderer"));
+             tElementDic.Add(new KeyValuePair<string, string>("Text","Text"));
    
-            
+
         };//CheckNullElementEndTag
 
         StringBuilder tSb = new StringBuilder();
@@ -75,9 +81,9 @@ public class 1 CanvasView
         }
 
         string tErrorInfo = tSb.ToString();
-        if (string.IsNullOrEmpty(tErrorInfo))
+        if (string.IsNullOrEmpty(tErrorInfo) == false)
         {
-            Debug.LogError(string.Format("{0}\n{1}", "1 CanvasView 绑定的元素丢失, 请打开工具检查， 问题元素如下：", tErrorInfo));
+            Debug.LogError(string.Format("{0}\n{1}", "CanvasView 绑定的元素丢失, 请打开工具检查， 问题元素如下：", tErrorInfo));
         }
     }
 #endif
