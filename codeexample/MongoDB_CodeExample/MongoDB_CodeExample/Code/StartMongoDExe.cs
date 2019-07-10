@@ -10,15 +10,53 @@ using System.Threading.Tasks;
 /// </summary>
 public class StartMongoDExe
 {
+    //我家里电脑的路径
+    ////MongoDB 服务器执行文件的位置
+    //private static string mMongodPath = @"E:\WorkProgramFiles\MongoDB\MongoDB4.0.10\bin\mongod.exe";   
+
+    ////用于cmd 的指令， 用于通过cmd 开启执行文件
+    //private static string mMongodStartCommand = @"E:\WorkProgramFiles\MongoDB\MongoDB4.0.10\bin\mongod.exe --dbpath ""E:\MongoDBCache\data\db""";
+
+    ////设置数据库的位置的指令
+    //private static string mDbpathPar = @"--dbpath ""E:\MongoDBCache\data\db""";
+
+
+    //公司电脑的路径
     //MongoDB 服务器执行文件的位置
-    private static string mMongodPath = @"E:\WorkProgramFiles\MongoDB\MongoDB4.0.10\bin\mongod.exe";   
+    private static string mMongodPath = @"D:\program\MongoDB\Server\4.0.10\bin\mongod.exe";
 
     //用于cmd 的指令， 用于通过cmd 开启执行文件
-    private static string mMongodStartCommand = @"E:\WorkProgramFiles\MongoDB\MongoDB4.0.10\bin\mongod.exe --dbpath ""E:\MongoDBCache\data\db""";
+    private static string mMongodStartCommand = @"D:\program\MongoDB\Server\4.0.10\bin\mongod.exe --dbpath ""C:\MongoDB\data\db""";
+
+    //设置数据库的位置的指令
+    private static string mDbpathPar = @"--dbpath ""C:\MongoDB\data\db""";
+
+
 
     //cmd 的位置
     private static string mCmdPath = @"C:\Windows\System32\cmd.exe";
 
+
+    /// <summary>
+    /// 是否已有Mongod 服务器在运行了
+    /// </summary>
+    /// <returns></returns>
+    public  static bool HasStartMongod()
+    {
+        foreach (var tProcess in Process.GetProcesses())
+        {
+            Console.WriteLine(tProcess.ProcessName);
+
+            if (tProcess.ProcessName == "mongod")
+            {
+                Console.WriteLine("已有Mongod 服务器在运行了");
+                return true;
+            }
+
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// 通过cmd 来启动 MongoDB 服务器， 这样如果有什么错误导致，MongDB服务器启动不起来
@@ -26,6 +64,9 @@ public class StartMongoDExe
     /// </summary>
     public static void StartCmdToRunMongod()
     {
+        if (HasStartMongod())
+            return;
+
         ProcessStartInfo tProcessStartInfo = new ProcessStartInfo();
 
         tProcessStartInfo.FileName = mCmdPath;
@@ -55,9 +96,12 @@ public class StartMongoDExe
     /// </summary>
     public static void StartMongoDB()
     {
+        if (HasStartMongod())
+            return;
+
         ProcessStartInfo tProcessStartInfo = new ProcessStartInfo();
         tProcessStartInfo.FileName = mMongodPath;
-        tProcessStartInfo.Arguments = @"--dbpath ""E:\MongoDBCache\data\db""";
+        tProcessStartInfo.Arguments = mDbpathPar;
 
         //  tProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;   //隐藏窗口， 相当于后台运行
 
