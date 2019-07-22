@@ -12,6 +12,7 @@ class Program
         //启动MongoDB 的服务器
       //  StartMongoDExe.StartCmdToRunMongod();
         StartMongoDExe.StartMongoDB();
+
     }
 }
 

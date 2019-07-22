@@ -5,6 +5,16 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB_CodeExample", "MongoDB_CodeExample\MongoDB_CodeExample.csproj", "{E4C0550B-0A5F-43C2-87D1-8E176DE93501}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB.Bson", "MongoDB_CodeExample\MongoDBDrive\v2.8x\src\MongoDB.Bson\MongoDB.Bson.csproj", "{120CB7BA-CA48-4C99-9149-E072B6C1E690}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB.Driver", "MongoDB_CodeExample\MongoDBDrive\v2.8x\src\MongoDB.Driver\MongoDB.Driver.csproj", "{E84C30BB-07FD-437B-830F-95D226CE2207}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB.Driver.Core", "MongoDB_CodeExample\MongoDBDrive\v2.8x\src\MongoDB.Driver.Core\MongoDB.Driver.Core.csproj", "{B3D30452-D603-4C1B-805D-77557C5B4E99}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB.Driver.GridFS", "MongoDB_CodeExample\MongoDBDrive\v2.8x\src\MongoDB.Driver.GridFS\MongoDB.Driver.GridFS.csproj", "{5721AA2E-D99E-4895-8940-2F53467BD1D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB.Driver.Legacy", "MongoDB_CodeExample\MongoDBDrive\v2.8x\src\MongoDB.Driver.Legacy\MongoDB.Driver.Legacy.csproj", "{B669F011-9C27-4750-BAB2-186AD605BC15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +25,26 @@ Global
 		{E4C0550B-0A5F-43C2-87D1-8E176DE93501}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4C0550B-0A5F-43C2-87D1-8E176DE93501}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4C0550B-0A5F-43C2-87D1-8E176DE93501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120CB7BA-CA48-4C99-9149-E072B6C1E690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120CB7BA-CA48-4C99-9149-E072B6C1E690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120CB7BA-CA48-4C99-9149-E072B6C1E690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120CB7BA-CA48-4C99-9149-E072B6C1E690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E84C30BB-07FD-437B-830F-95D226CE2207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E84C30BB-07FD-437B-830F-95D226CE2207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E84C30BB-07FD-437B-830F-95D226CE2207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E84C30BB-07FD-437B-830F-95D226CE2207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D30452-D603-4C1B-805D-77557C5B4E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D30452-D603-4C1B-805D-77557C5B4E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D30452-D603-4C1B-805D-77557C5B4E99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D30452-D603-4C1B-805D-77557C5B4E99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5721AA2E-D99E-4895-8940-2F53467BD1D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5721AA2E-D99E-4895-8940-2F53467BD1D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5721AA2E-D99E-4895-8940-2F53467BD1D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5721AA2E-D99E-4895-8940-2F53467BD1D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B669F011-9C27-4750-BAB2-186AD605BC15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B669F011-9C27-4750-BAB2-186AD605BC15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B669F011-9C27-4750-BAB2-186AD605BC15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B669F011-9C27-4750-BAB2-186AD605BC15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

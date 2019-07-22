@@ -37,18 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>MongoDBDrive\v2.8x\DnsClient.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MongoDBDrive\v2.8x\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MongoDBDrive\v2.8x\MongoDB.Driver.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MongoDBDrive\v2.8x\MongoDB.Driver.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,18 +55,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MongoDBDrive\v2.8x\DnsClient.dll" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Bson.dll" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Bson.pdb" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Bson.xml" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.Core.dll" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.Core.pdb" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.Core.xml" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.dll" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.pdb" />
-    <Content Include="MongoDBDrive\v2.8x\MongoDB.Driver.xml" />
-    <Content Include="MongoDBDrive\v2.8x\System.Buffers.dll" />
-    <Content Include="MongoDBDrive\v2.8x\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ProjectReference Include="MongoDBDrive\v2.8x\src\MongoDB.Bson\MongoDB.Bson.csproj">
+      <Project>{120cb7ba-ca48-4c99-9149-e072b6c1e690}</Project>
+      <Name>MongoDB.Bson</Name>
+    </ProjectReference>
+    <ProjectReference Include="MongoDBDrive\v2.8x\src\MongoDB.Driver.Core\MongoDB.Driver.Core.csproj">
+      <Project>{b3d30452-d603-4c1b-805d-77557c5b4e99}</Project>
+      <Name>MongoDB.Driver.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="MongoDBDrive\v2.8x\src\MongoDB.Driver.GridFS\MongoDB.Driver.GridFS.csproj">
+      <Project>{5721aa2e-d99e-4895-8940-2f53467bd1d7}</Project>
+      <Name>MongoDB.Driver.GridFS</Name>
+    </ProjectReference>
+    <ProjectReference Include="MongoDBDrive\v2.8x\src\MongoDB.Driver.Legacy\MongoDB.Driver.Legacy.csproj">
+      <Project>{b669f011-9c27-4750-bab2-186ad605bc15}</Project>
+      <Name>MongoDB.Driver.Legacy</Name>
+    </ProjectReference>
+    <ProjectReference Include="MongoDBDrive\v2.8x\src\MongoDB.Driver\MongoDB.Driver.csproj">
+      <Project>{e84c30bb-07fd-437b-830f-95d226ce2207}</Project>
+      <Name>MongoDB.Driver</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
