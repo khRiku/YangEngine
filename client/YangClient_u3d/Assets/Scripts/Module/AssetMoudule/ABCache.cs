@@ -14,12 +14,9 @@ public class ABCache
     private string mAbPath;
     private Dictionary<string, Object> mAssetDic;
 
+    private int mRefCount;
+
     private void LoadAb()
-    {
-
-    }
-
-    private void LoadAbAsync()
     {
 
     }
@@ -29,7 +26,27 @@ public class ABCache
         return null;
     }
 
-    private void LoadAssetAsync(Action<Object> pCallback)
+    public void LoadAbAsync()
+    {
+
+    }
+
+    public void LoadAssetAsync(Action<Object> pCallback)
+    {
+
+    }
+
+    private void UnLoadAb()
+    {
+
+    }
+
+    private void AddRefCount()
+    {
+
+    }
+
+    private void DecreaseRefCount()
     {
 
     }
