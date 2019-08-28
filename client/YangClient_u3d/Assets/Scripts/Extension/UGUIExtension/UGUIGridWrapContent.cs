@@ -145,7 +145,7 @@ public class UGUIGridWrapContent : MonoBehaviour
 
         }
 
-        if (mPosChange)
+        if (mPosChange || mStartScrollToTargetPos)
             OnPosEndChange();
     }
 
@@ -291,19 +291,37 @@ public class UGUIGridWrapContent : MonoBehaviour
         return null;
     }
 
+    private void DelayCall(Action pAction, int pDelayFrame = 2)
+    {
+        StartCoroutine(IEnumratorDelayCall(pAction, pDelayFrame));
+    }
+
+    private IEnumerator IEnumratorDelayCall(Action pAction, int pDelayFrame = 2)
+    {
+        yield return pDelayFrame;
+
+        if (pAction != null)
+            pAction();
+    }
+
     public void Show(UGUIGridWrapContentConfig pConfig)
     {
         mConfig = pConfig;
         SetDefaultValue();
 
-        mGridArrangeBase = GetGridArrangeInstance();
+        DelayCall(() =>
+        {
+            mGridArrangeBase = GetGridArrangeInstance();
 
-        InitSeeting();
+            InitSeeting();
 
-        mGridArrangeBase.AdjustContentSize();
-        CreateAllCellInstance();
+            mGridArrangeBase.AdjustContentSize();
+            CreateAllCellInstance();
 
-        DelayCallAdjustDragState();
+            //DelayCallAdjustDragState();
+            AdjustDragState();
+        });
+
     }
 
     //设置一些默认值
@@ -654,18 +672,21 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// <param name="pPostType">定位到可视区域的第几行, 1 为 第 1 行(列）， 2 为 第 2 行（列）, 特殊位置看 FixPosType </param>
     public void FixToDataIndex(int pDataIndex, float pVelocity = 1f, int pPosType = 1)
     {
-        Vector2 tFixAnchorPos = mGridArrangeBase.GetFixAnchorPos(pDataIndex, pPosType);
-
-        Vector2 tTargetPos = tFixAnchorPos;
-
-        //开启了滑动补足， 那定位的位置需转换为滑动补足的位置
-        if (mEnalbDragSupplement)
+        DelayCall(() =>
         {
-            mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByPos(tFixAnchorPos);
-            tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(mDragSupplementIndex);
-        }
+            Vector2 tFixAnchorPos = mGridArrangeBase.GetFixAnchorPos(pDataIndex, pPosType);
 
-        StartScrollToTargetPos(tTargetPos, pVelocity);    
+            Vector2 tTargetPos = tFixAnchorPos;
+
+            //开启了滑动补足， 那定位的位置需转换为滑动补足的位置
+            if (mEnalbDragSupplement)
+            {
+                mDragSupplementIndex = mGridArrangeBase.GetDragSupplementIndexByPos(tFixAnchorPos);
+                tTargetPos = mGridArrangeBase.GetDragSupplemnetAnchorPos(mDragSupplementIndex);
+            }
+
+            StartScrollToTargetPos(tTargetPos, pVelocity);
+        });
     }
 
     // <summary>
@@ -675,19 +696,21 @@ public class UGUIGridWrapContent : MonoBehaviour
     public void ChangeDataCount(int pCount, bool pFixToLast = false)
     {
         Vector2 tCurPos = mRectTransform.anchoredPosition;
-
         mConfig.mDataCnt = pCount;
         Show(mConfig);
 
-        if (pFixToLast)
+        DelayCall(() =>
         {
-            FixToDataIndex(pCount - 1, (int)FixPosType.Last);
-        }
-        else
-        {
-            mRectTransform.anchoredPosition = mGridArrangeBase.AdjustAnchorPos(tCurPos);
-            RefreshAllCellPos();
-        }
+            if (pFixToLast)
+            {
+                FixToDataIndex(pCount - 1, (int)FixPosType.Last);
+            }
+            else
+            {
+                mRectTransform.anchoredPosition = mGridArrangeBase.AdjustAnchorPos(tCurPos);
+                RefreshAllCellPos();
+            }
+        });
     }
 
     /// <summary>
@@ -695,12 +718,16 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     public void RefreshAll()
     {
-        for (int i = 0; i < mDataIndexList.Count; ++i)
+        DelayCall(() => 
         {
-            int tDataIndex = mDataIndexList[i];
-            GameObject tGo = mCellDic[tDataIndex];
-            mConfig.mDisplayCellAction(tDataIndex, tGo);
-        }
+            for (int i = 0; i < mDataIndexList.Count; ++i)
+            {
+                int tDataIndex = mDataIndexList[i];
+                GameObject tGo = mCellDic[tDataIndex];
+                mConfig.mDisplayCellAction(tDataIndex, tGo);
+            }
+        });
+
     }
 
     /// <summary>
@@ -708,11 +735,15 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     public void RefrehsByDataIndex(int pDataIndex)
     {
-        if (mDataIndexList.Contains(pDataIndex) == false)
-            return;
+        DelayCall(() =>
+        {
+            if (mDataIndexList.Contains(pDataIndex) == false)
+                return;
 
-        GameObject pGo = mCellDic[pDataIndex];
-        mConfig.mDisplayCellAction(pDataIndex, pGo);
+            GameObject pGo = mCellDic[pDataIndex];
+            mConfig.mDisplayCellAction(pDataIndex, pGo);
+        });
+
     }
 
     /// <summary>
@@ -720,36 +751,50 @@ public class UGUIGridWrapContent : MonoBehaviour
     /// </summary>
     public void RefrehsByGameObject(GameObject pGo)
     {
-        int tDataIndex = GetDataIndexByGo(pGo);
-        if (tDataIndex < 0)
-            return;
+        GetDataIndexByGo(pGo, (tDataIndex) =>
+        {
+            if (tDataIndex < 0)
+                return;
 
-        mConfig.mDisplayCellAction(tDataIndex, pGo);
+            mConfig.mDisplayCellAction(tDataIndex, pGo);
+        });
     }
 
     /// <summary>
     /// 根据 Go 来获取数据索引（不同的滑动状态， 同一Go可能会对应不同的DataIndex)
     /// </summary>
-    public int GetDataIndexByGo(GameObject pGo)
+    public void GetDataIndexByGo(GameObject pGo, Action<int> pReturnAction)
     {
-        foreach (var tKv in mCellDic)
+        DelayCall(() =>
         {
-            if (tKv.Value == pGo)
-                return tKv.Key;
-        }
+            if (pReturnAction == null)
+                return;
 
-        return -1;
+            foreach (var tKv in mCellDic)
+            {
+                if (tKv.Value == pGo)
+                    pReturnAction(tKv.Key);
+            }
+
+            pReturnAction(-1);
+        });
     }
 
     /// <summary>
     /// 根据数据索引获取Go, 可能为空(该数据索引暂时没有与之对应的Go)
     /// </summary>
-    public GameObject GetGoByDataIndex(int pDataIndex)
+    public void GetGoByDataIndex(int pDataIndex, Action<GameObject> pReturnAction)
     {
-        GameObject tGo = null;
-        mCellDic.TryGetValue(pDataIndex, out tGo);
+        DelayCall(() =>
+        {
+            if (pReturnAction == null)
+                return;
 
-        return tGo;
+            GameObject tGo = null;
+            mCellDic.TryGetValue(pDataIndex, out tGo);
+
+            pReturnAction(tGo);
+        });
     }
     #endregion
 
